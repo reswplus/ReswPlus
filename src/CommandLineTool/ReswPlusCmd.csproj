@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VSExtension\ReswPlus.Core\ReswPlus.Core.csproj" />
+    <ProjectReference Include="..\Core\ReswPlus.Core\ReswPlus.Core.csproj" />
   </ItemGroup>
 
 </Project>
