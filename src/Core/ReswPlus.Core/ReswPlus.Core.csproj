@@ -72,31 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClassGenerator\Models\Localization.cs" />
-    <Compile Include="ClassGenerator\Models\StronglyTypedClass.cs" />
-    <Compile Include="ClassGenerator\ReswClassGenerator.cs" />
-    <Compile Include="ClassGenerator\GenerationResult.cs" />
-    <Compile Include="CodeGenerators\CodeStringBuilder.cs" />
-    <Compile Include="CodeGenerators\CppCodeGeneratorBase.cs" />
-    <Compile Include="CodeGenerators\CppCXCodeGenerator.cs" />
-    <Compile Include="CodeGenerators\CppWinRTCodeGenerator.cs" />
-    <Compile Include="CodeGenerators\CsharpCodeGenerator.cs" />
-    <Compile Include="CodeGenerators\DotNetGeneratorBase.cs" />
-    <Compile Include="CodeGenerators\ICodeGenerator.cs" />
-    <Compile Include="CodeGenerators\VBCodeGenerator.cs" />
-    <Compile Include="Converters\AndroidXMLConverter.cs" />
-    <Compile Include="Interfaces\IErrorLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="ResourceInfo\IProject.cs" />
-    <Compile Include="ResourceInfo\Language.cs" />
-    <Compile Include="ResourceInfo\ResourceFileInfo.cs" />
-    <Compile Include="ResourceParser\FormatTag.cs" />
-    <Compile Include="ResourceParser\ParameterType.cs" />
-    <Compile Include="ResourceParser\ReswFilters.cs" />
-    <Compile Include="ResourceParser\ReswInfo.cs" />
-    <Compile Include="ResourceParser\ReswItem.cs" />
-    <Compile Include="ResourceParser\ReswParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

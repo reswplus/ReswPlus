@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\..\SourceGenerator\ReswPlus.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -22,7 +23,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORECORE;WINDOWS_UWP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -254,7 +255,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.9</Version>
+      <Version>6.2.12</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -272,21 +273,10 @@
       <Project>{b1e5a387-c5e6-4790-8b75-56d678439a51}</Project>
       <Name>ReswPlusSourceGenerator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Core\ReswPlus.Core\ReswPlus.Core.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
-  <!--  ADDED -->
-  <PropertyGroup>
-    <AdditionalFileItemNames>$(AdditionalFileItemNames);PRIResource</AdditionalFileItemNames>
-  </PropertyGroup>
-  <ItemGroup>
-    <CompilerVisibleProperty Include="MSBuildProjectFullPath" />
-    <CompilerVisibleProperty Include="RootNamespace" />
-    <CompilerVisibleProperty Include="DefaultLanguage" />
-    <CompilerVisibleProperty Include="OutputType" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

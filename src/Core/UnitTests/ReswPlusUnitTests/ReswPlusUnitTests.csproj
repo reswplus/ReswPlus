@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ReswPlus.Core\ReswPlus.Core.csproj" />
+    <ProjectReference Include="..\..\..\SourceGenerator\ReswPlusSourceGenerator.csproj" />
   </ItemGroup>
 
 </Project>

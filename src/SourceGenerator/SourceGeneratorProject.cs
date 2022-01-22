@@ -1,4 +1,4 @@
-﻿// ------------------------------------------------------
+// ------------------------------------------------------
 // Copyright (C) Microsoft. All rights reserved.
 // ------------------------------------------------------
 
@@ -8,7 +8,6 @@ namespace ReswPlusSourceGenerator
 {
     public class SourceGeneratorProject : IProject
     {
-
         public SourceGeneratorProject(string name, bool isLibrary)
         {
             Name = name;

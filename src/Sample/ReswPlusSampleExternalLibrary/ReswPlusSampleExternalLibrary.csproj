@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\..\SourceGenerator\ReswPlus.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -139,17 +140,6 @@
       <Project>{b1e5a387-c5e6-4790-8b75-56d678439a51}</Project>
       <Name>ReswPlusSourceGenerator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Core\ReswPlus.Core\ReswPlus.Core.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
-  <!--  ADDED -->
-  <PropertyGroup>
-    <AdditionalFileItemNames>$(AdditionalFileItemNames);PRIResource</AdditionalFileItemNames>
-  </PropertyGroup>
-  <ItemGroup>
-    <CompilerVisibleProperty Include="MSBuildProjectFullPath" />
-    <CompilerVisibleProperty Include="RootNamespace" />
-    <CompilerVisibleProperty Include="DefaultLanguage" />
-    <CompilerVisibleProperty Include="OutputType" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

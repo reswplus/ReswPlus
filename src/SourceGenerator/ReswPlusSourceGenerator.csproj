@@ -4,16 +4,23 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<LangVersion>9.0</LangVersion>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-</PropertyGroup>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<PackageId>ReswPlus</PackageId>
+		<Version>0.1.5-alpha</Version>
+		<Authors>Rudy Huyn</Authors>
+		<Description>Simple Binary Tree implementation</Description>
+		<PackageProjectUrl>https://github.com/reswplus/ReswPlus/</PackageProjectUrl>
+		<PackageIcon>Icon.png</PackageIcon>
+		<PackageCopyright>Copyright 2022</PackageCopyright>
+		<PackageTags>dotnet localization resx resw plural pluralization</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<DebugType>full</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <None Remove="Templates\Macros\Macros.txt" />
-	</ItemGroup>
 
 	<ItemGroup>
 	  <EmbeddedResource Include="Templates\Macros\Macros.txt" />
@@ -62,7 +69,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" />
+		<None Include="ReswPlus.props" Pack="true" PackagePath="build" />
+		<None Include="Images\Icon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
@@ -70,9 +79,7 @@
 		<PackageReference Include="System.CodeDom" Version="5.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Core\ReswPlus.Core\ReswPlus.Core.csproj" />
-	</ItemGroup>
-	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
+	<Import Project="..\ReswPlus.Shared\ReswPlus.Shared.projitems" Label="Shared" />
 </Project>

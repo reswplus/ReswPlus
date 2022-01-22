@@ -25,7 +25,13 @@ namespace ReswPlusSourceGenerator
         {
         }
 
-        private string SelectDefaultLanguage(IEnumerable<string> reswFiles, string defaultLanguage)
+        /// <summary>
+        /// Retrieve the default resource file in the list provided
+        /// </summary>
+        /// <param name="reswFiles">list of resource files</param>
+        /// <param name="defaultLanguage">default language of the project</param>
+        /// <returns>the path to the default resource file</returns>
+        private string RetrieveDefaultResourceFile(IEnumerable<string> reswFiles, string defaultLanguage)
         {
 
             var languages = new List<string>();
@@ -33,11 +39,12 @@ namespace ReswPlusSourceGenerator
             {
                 languages.Add(defaultLanguage);
             }
-            if ("en-us".Equals(defaultLanguage, StringComparison.InvariantCultureIgnoreCase))
+            if (!"en-us".Equals(defaultLanguage, StringComparison.InvariantCultureIgnoreCase))
             {
                 languages.Add("en-us");
             }
-            if ("en".Equals(defaultLanguage, StringComparison.InvariantCultureIgnoreCase))
+
+            if (!"en".Equals(defaultLanguage, StringComparison.InvariantCultureIgnoreCase))
             {
                 languages.Add("en");
             }
@@ -54,53 +61,54 @@ namespace ReswPlusSourceGenerator
                 }
             }
 
+            // if the default resource file is not found, return the first one.
             return reswFiles.FirstOrDefault();
         }
 
         public void Execute(GeneratorExecutionContext context)
         {
-
             if (context.Compilation is not CSharpCompilation csharpCompilation)
             {
                 // the converter only support C# for the moment
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(
+                    "RP0001",
+                    "Language not supported",
+                    "ReswPlus source generator only supports C#.",
+                    "ReswPlus.Errors",
+                    DiagnosticSeverity.Error,
+                    true), (Location)null));
                 return;
             }
 
-            if (!context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.DefaultLanguage", out var defaultLanguage))
-            {
-                //error
-                return;
-            }
-
-            if (!context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace))
-            {
-                // error
-                return;
-            }
-
-            if (!context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.MSBuildProjectFullPath", out var projectFileFullPath))
-            {
-                // error
-                return;
-            }
-
-            if (!context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.OutputType", out var outputType))
+            // retrieve the project settings.
+            if (!context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.DefaultLanguage", out var projectDefaultLanguage)
+                || !context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out var projectRootNamespace)
+                || !context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.MSBuildProjectFullPath", out var projectFileFullPath)
+                || !context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.OutputType", out var outputType))
             {
                 // error
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(
+                 "RP0002",
+                 "Build properties missing",
+                 "Build properties are not exposed to ReswPlus source generator",
+                 "ReswPlus.Errors",
+                 DiagnosticSeverity.Error,
+                 true), (Location)null));
                 return;
             }
 
 #if DEBUG
             if (!Debugger.IsAttached)
             {
-             //   Debugger.Launch();
+                // Uncomment to debug
+                // Debugger.Launch();
             }
 #endif
 
             var isLibrary = outputType.Equals("library", StringComparison.InvariantCultureIgnoreCase)
                 || outputType.Equals("module", StringComparison.InvariantCultureIgnoreCase);
 
-            var projectRoot = Path.GetDirectoryName(projectFileFullPath);
+            var projectRootPath = Path.GetDirectoryName(projectFileFullPath);
 
             var allResourceFiles = (from f in context.AdditionalFiles
                                     where Path.GetExtension(f.Path).Equals(".resw", StringComparison.InvariantCultureIgnoreCase)
@@ -109,17 +117,17 @@ namespace ReswPlusSourceGenerator
                                                 group file
                                                 by Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(file)), Path.GetFileName(file))
                                                 into fileGrouped
-                                                select SelectDefaultLanguage(fileGrouped, defaultLanguage)).ToArray();
+                                                select RetrieveDefaultResourceFile(fileGrouped, projectDefaultLanguage)).ToArray();
 
             var allLanguages = (from path in allResourceFiles select Path.GetFileName(Path.GetDirectoryName(path)).Split('-')[0].ToLower()).Distinct().ToArray();
 
             foreach (var file in defaultLanguageResourceFiles)
             {
-                var namespaceForReswFile = rootNamespace;
+                var namespaceForReswFile = projectRootNamespace;
                 var reswParentDirectory = Path.GetDirectoryName(file);
-                if (reswParentDirectory.StartsWith(projectRoot))
+                if (reswParentDirectory.StartsWith(projectRootPath))
                 {
-                    var additionalNamespace = reswParentDirectory.Substring(projectRoot.Length).Replace(Path.DirectorySeparatorChar, '.');
+                    var additionalNamespace = reswParentDirectory.Substring(projectRootPath.Length).Replace(Path.DirectorySeparatorChar, '.');
                     if (!string.IsNullOrEmpty(additionalNamespace))
                     {
                         namespaceForReswFile += additionalNamespace.StartsWith(".") ? additionalNamespace : "." + additionalNamespace;
@@ -141,26 +149,20 @@ namespace ReswPlusSourceGenerator
 
                 if (generatedData.ContainsMacro)
                 {
-                    var resourceLoaderExtensionSource = Assembly.GetExecutingAssembly().GetManifestResourceStream("ReswPlusSourceGenerator.Templates.Macros.Macros.txt");
-                    context.AddSource("Macros.cs", SourceText.From(ReadAllText(resourceLoaderExtensionSource), Encoding.UTF8));
+                    AddSourceFromResource(context, "ReswPlusSourceGenerator.Templates.Macros.Macros.txt", "Macros.cs");
                 }
                 if (generatedData.ContainsPlural)
                 {
-                    var iPluralFileSource = Assembly.GetExecutingAssembly().GetManifestResourceStream("ReswPlusSourceGenerator.Templates.Plurals.IPluralProvider.txt");
-                    context.AddSource("IPluralProvider.cs", SourceText.From(ReadAllText(iPluralFileSource), Encoding.UTF8));
-                    var pluralTypeSource = Assembly.GetExecutingAssembly().GetManifestResourceStream("ReswPlusSourceGenerator.Templates.Plurals.PluralTypeEnum.txt");
-                    context.AddSource("PluralTypeEnum.cs", SourceText.From(ReadAllText(pluralTypeSource), Encoding.UTF8));
-                    var intExtSource = Assembly.GetExecutingAssembly().GetManifestResourceStream("ReswPlusSourceGenerator.Templates.Utils.IntExt.txt");
-                    context.AddSource("IntExt.cs", SourceText.From(ReadAllText(intExtSource), Encoding.UTF8));
-                    var doubleExtSource = Assembly.GetExecutingAssembly().GetManifestResourceStream("ReswPlusSourceGenerator.Templates.Utils.DoubleExt.txt");
-                    context.AddSource("DoubleExt.cs", SourceText.From(ReadAllText(doubleExtSource), Encoding.UTF8));
-
+                    AddSourceFromResource(context, "ReswPlusSourceGenerator.Templates.Plurals.IPluralProvider.txt", "IPluralProvider.cs");
+                    AddSourceFromResource(context, "ReswPlusSourceGenerator.Templates.Plurals.PluralTypeEnum.txt", "PluralTypeEnum.cs");
+                    AddSourceFromResource(context, "ReswPlusSourceGenerator.Templates.Utils.IntExt.txt", "IntExt.cs");
+                    AddSourceFromResource(context, "ReswPlusSourceGenerator.Templates.Utils.DoubleExt.txt", "DoubleExt.cs");
                     AddLanguageSupport(context, allLanguages);
                 }
             }
         }
 
-        private void AddLanguageSupport(GeneratorExecutionContext context, string[] languagesSupported)
+        private static void AddLanguageSupport(GeneratorExecutionContext context, string[] languagesSupported)
         {
             var pluralFileToAdd = new List<PluralForm>();
             var pluralSelectorCode = "default:\n  return new ReswPlusLib.Providers.OtherProvider();\n";
@@ -181,7 +183,6 @@ namespace ReswPlusSourceGenerator
                 pluralSelectorCode += $"  return new ReswPlusLib.Providers.{pluralFile.Name}Provider();\n";
             }
 
-
             var pluralOtherFileSource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"ReswPlusSourceGenerator.Templates.Plurals.OtherProvider.txt");
             context.AddSource($"OtherProvider.cs", SourceText.From(ReadAllText(pluralOtherFileSource), Encoding.UTF8));
 
@@ -191,7 +192,13 @@ namespace ReswPlusSourceGenerator
             context.AddSource("ResourceLoaderExtension.cs", SourceText.From(resourceLoaderExtensionCode, Encoding.UTF8));
         }
 
-        private string ReadAllText(Stream stream)
+        private static void AddSourceFromResource(GeneratorExecutionContext context, string resourcePath, string itemName)
+        {
+            var source = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
+            context.AddSource(itemName, SourceText.From(ReadAllText(source), Encoding.UTF8));
+        }
+
+        private static string ReadAllText(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
             return new StreamReader(stream).ReadToEnd();
