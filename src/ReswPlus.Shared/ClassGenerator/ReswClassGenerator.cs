@@ -33,8 +33,8 @@ namespace ReswPlus.Core.ClassGenerator
         private const string TagFormatDotNet = "#FormatNet";
 
         private static readonly Regex _regexStringFormat;
-        private static readonly Regex _regexRemoveSpace = new Regex("\\s+");
-        private static readonly Regex _regexDotNetFormatting = new Regex(@"(?<!{){\d+(,-?\d+)?(:[^}]+)?}");
+        private static readonly Regex _regexRemoveSpace = new("\\s+");
+        private static readonly Regex _regexDotNetFormatting = new(@"(?<!{){\d+(,-?\d+)?(:[^}]+)?}");
         private readonly ResourceFileInfo _resourceFileInfo;
         private readonly ICodeGenerator _codeGenerator;
         private readonly IErrorLogger _logger;
@@ -67,17 +67,8 @@ namespace ReswPlus.Core.ClassGenerator
                 case Language.CSHARP:
                     codeGenerator = new CSharpCodeGenerator();
                     break;
-                case Language.VB:
-                    codeGenerator = new VBCodeGenerator();
-                    break;
-                case Language.CPPCX:
-                    codeGenerator = new CppCXCodeGenerator();
-                    break;
-                case Language.CPPWINRT:
-                    codeGenerator = new CppWinRTCodeGenerator();
-                    break;
             }
-            if (codeGenerator != null)
+            if (codeGenerator is not null)
             {
                 return new ReswClassGenerator(resourceFileInfo, codeGenerator, logger);
             }

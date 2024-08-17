@@ -17,7 +17,7 @@ namespace ReswPlusSourceGenerator
 {
 
     [Generator]
-    public partial class ReswGenerator : ISourceGenerator
+    public partial class ReswSourceGenerator : ISourceGenerator
     {
         public void Initialize(GeneratorInitializationContext context)
         {
@@ -74,7 +74,7 @@ namespace ReswPlusSourceGenerator
                     "ReswPlus source generator only supports C#.",
                     "ReswPlus.Errors",
                     DiagnosticSeverity.Error,
-                    true), (Location)null));
+                    true), null));
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace ReswPlusSourceGenerator
                  "Build properties are not exposed to ReswPlus source generator",
                  "ReswPlus.Errors",
                  DiagnosticSeverity.Error,
-                 true), (Location)null));
+                 true), null));
                 return;
             }
 
@@ -110,14 +110,14 @@ namespace ReswPlusSourceGenerator
 
             var allResourceFiles = (from f in context.AdditionalFiles
                                     where Path.GetExtension(f.Path).Equals(".resw", StringComparison.InvariantCultureIgnoreCase)
-                                    select f.Path).Distinct();
+                                    select f).Distinct();
             var defaultLanguageResourceFiles = (from file in allResourceFiles
                                                 group file
-                                                by Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(file)), Path.GetFileName(file))
+                                                by Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(file.Path)), Path.GetFileName(file.Path))
                                                 into fileGrouped
-                                                select RetrieveDefaultResourceFile(fileGrouped, projectDefaultLanguage)).ToArray();
+                                                select RetrieveDefaultResourceFile(fileGrouped.Select(f => f.Path), projectDefaultLanguage)).ToArray();
 
-            var allLanguages = (from path in allResourceFiles select Path.GetFileName(Path.GetDirectoryName(path)).Split('-')[0].ToLower()).Distinct().ToArray();
+            var allLanguages = (from path in allResourceFiles select Path.GetFileName(Path.GetDirectoryName(path.Path)).Split('-')[0].ToLower()).Distinct().ToArray();
 
             foreach (var file in defaultLanguageResourceFiles)
             {
@@ -132,11 +132,18 @@ namespace ReswPlusSourceGenerator
                     }
                 }
 
+                var additionalText = context.AdditionalFiles.FirstOrDefault(f => f.Path == file);
+                if (additionalText == null)
+                {
+                    continue;
+                }
+
                 var resourceFileInfo = new ResourceFileInfo(file, new Project(context.Compilation.AssemblyName, isLibrary));
                 var codeGenerator = ReswClassGenerator.CreateGenerator(resourceFileInfo, null);
                 var generatedData = codeGenerator.GenerateCode(
                     baseFilename: Path.GetFileName(file).Split('.')[0],
-                    content: File.ReadAllText(file), defaultNamespace: namespaceForReswFile,
+                    content: additionalText.GetText(context.CancellationToken).ToString(),
+                    defaultNamespace: namespaceForReswFile,
                     isAdvanced: true);
 
                 foreach (var generatedFile in generatedData.Files)
@@ -162,15 +169,9 @@ namespace ReswPlusSourceGenerator
 
         private static void AddLanguageSupport(GeneratorExecutionContext context, string[] languagesSupported)
         {
-            var pluralFileToAdd = new List<PluralForm>();
             var pluralSelectorCode = "default:\n  return new ReswPlusLib.Providers.OtherProvider();\n";
             foreach (var pluralFile in PluralFormsProvider.RetrievePluralFormsForLanguages(languagesSupported))
             {
-                if (!pluralFile.Languages.Any(p => languagesSupported.Contains(p)))
-                {
-                    continue;
-                }
-                pluralFileToAdd.Add(pluralFile);
                 var pluralFileSource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"ReswPlusSourceGenerator.Templates.Plurals.{pluralFile.Id}Provider.txt");
                 context.AddSource($"{pluralFile.Id}Provider.cs", SourceText.From(ReadAllText(pluralFileSource), Encoding.UTF8));
 

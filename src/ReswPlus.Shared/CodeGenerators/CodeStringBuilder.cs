@@ -15,13 +15,14 @@ namespace ReswPlus.Core.CodeGenerators
             _indentString = indentString;
         }
 
-        public void AppendLine(string value)
+        public CodeStringBuilder AppendLine(string value)
         {
             AddSpace(_level);
             _stringBuilder.AppendLine(value);
+            return this;
         }
 
-        public void AddSpace(uint level)
+        private void AddSpace(uint level)
         {
             for (var i = 0; i < level; ++i)
             {
@@ -29,22 +30,25 @@ namespace ReswPlus.Core.CodeGenerators
             }
         }
 
-        public void AddLevel()
+        public CodeStringBuilder AddLevel()
         {
             ++_level;
+            return this;
         }
 
-        public void RemoveLevel()
+        public CodeStringBuilder RemoveLevel()
         {
             if (_level > 0)
             {
                 --_level;
             }
+            return this;
         }
 
-        public void AppendEmptyLine()
+        public CodeStringBuilder AppendEmptyLine()
         {
             _stringBuilder.AppendLine("");
+            return this;
         }
 
         public string GetString()

@@ -15,6 +15,7 @@
 		<PackageCopyright>Copyright 2022</PackageCopyright>
 		<PackageTags>dotnet localization resx resw plural pluralization</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

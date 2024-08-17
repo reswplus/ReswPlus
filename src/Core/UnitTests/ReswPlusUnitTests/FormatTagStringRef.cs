@@ -11,10 +11,10 @@ namespace ReswPlusUnitTests
         {
             var localizedItems = new List<ReswItem>()
                 {
-                    new ReswItem("TestString", "Test"),
-                    new ReswItem("Hello", "World"),
-                    new ReswItem("1223", "Number"),
-                    new ReswItem("Test_String", "TEST"),
+                    new("TestString", "Test"),
+                    new("Hello", "World"),
+                    new("1223", "Number"),
+                    new("Test_String", "TEST"),
                 };
 
             foreach (var item in localizedItems)
@@ -35,10 +35,10 @@ namespace ReswPlusUnitTests
         {
             var localizedItems = new List<ReswItem>()
                 {
-                    new ReswItem("TestString", "Test"),
-                    new ReswItem("Hello", "World"),
-                    new ReswItem("1223", "Number"),
-                    new ReswItem("Test_String", "TEST"),
+                    new("TestString", "Test"),
+                    new("Hello", "World"),
+                    new("1223", "Number"),
+                    new("Test_String", "TEST"),
                 };
 
             var wrongRefItems = new List<string>()
@@ -61,10 +61,10 @@ namespace ReswPlusUnitTests
         {
             var localizedItems = new List<ReswItem>()
                 {
-                    new ReswItem("TestString", "Test"),
-                    new ReswItem("Hello", "World"),
-                    new ReswItem("1223", "Number"),
-                    new ReswItem("Test_String", "TEST"),
+                    new("TestString", "Test"),
+                    new("Hello", "World"),
+                    new("1223", "Number"),
+                    new("Test_String", "TEST"),
                 };
 
             foreach (var stringRef1 in localizedItems)

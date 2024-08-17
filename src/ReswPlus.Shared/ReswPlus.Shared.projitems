@@ -14,13 +14,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)ClassGenerator\Models\StronglyTypedClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ClassGenerator\ReswClassGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\CodeStringBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\CppCodeGeneratorBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\CppCXCodeGenerator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\CppWinRTCodeGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\CsharpCodeGenerator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\DotNetGeneratorBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\ICodeGenerator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\VBCodeGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IErrorLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ResourceInfo\IProject.cs" />

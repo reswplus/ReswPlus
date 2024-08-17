@@ -52,7 +52,7 @@ namespace ReswPlus.Core.ResourceParser
 
     public class FormatTag
     {
-        public static readonly Dictionary<string, string> MacrosAvailable = new Dictionary<string, string>()
+        public static readonly Dictionary<string, string> MacrosAvailable = new()
         {
             /* all */
             { "DATE", "LongDate" },
@@ -81,7 +81,7 @@ namespace ReswPlus.Core.ResourceParser
             { "OS_VERSION", "OperatingSystemVersion" }
         };
 
-        public static readonly Dictionary<string, FormatTagParameterTypeInfo> AcceptedTypes = new Dictionary<string, FormatTagParameterTypeInfo>
+        public static readonly Dictionary<string, FormatTagParameterTypeInfo> AcceptedTypes = new()
         {
             {"Object", new FormatTagParameterTypeInfo(ParameterType.Object, false)},
             {"Byte", new FormatTagParameterTypeInfo(ParameterType.Byte, false)},
@@ -99,7 +99,7 @@ namespace ReswPlus.Core.ResourceParser
             {"Decimal", new FormatTagParameterTypeInfo(ParameterType.Decimal, true)}
         };
 
-        private static readonly Regex RegexNamedParameters = new Regex("^(?:(?:\"(?<literalString>(?:\\\\.|[^\\\"])*)\")|(?:(?<localizationRef>\\w+)\\(\\))|(?:(?<quantifier>Plural\\s+)?(?<type>\\w+)\\s*(?<name>\\w+)?))$");
+        private static readonly Regex RegexNamedParameters = new("^(?:(?:\"(?<literalString>(?:\\\\.|[^\\\"])*)\")|(?:(?<localizationRef>\\w+)\\(\\))|(?:(?<quantifier>Plural\\s+)?(?<type>\\w+)\\s*(?<name>\\w+)?))$");
 
         public static FunctionFormatTagParametersInfo ParseParameters(string key, IEnumerable<string> types, IEnumerable<ReswItem> basicLocalizedItems, string resourceFilename, IErrorLogger logger)
         {

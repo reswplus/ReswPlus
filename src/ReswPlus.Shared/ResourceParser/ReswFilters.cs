@@ -18,7 +18,7 @@ namespace ReswPlus.Core.ResourceParser
 
     public static class ReswFilters
     {
-        private static Regex regexPluralVariantItems = new Regex("(?:_(?<variant>Variant\\-?\\d+))?(?:_(?<plural>Zero|One|Other|Many|Few|None))?$");
+        private static Regex regexPluralVariantItems = new("(?:_(?<variant>Variant\\-?\\d+))?(?:_(?<plural>Zero|One|Other|Many|Few|None))?$");
 
         public static IEnumerable<VariantedReswItems> GetItemsWithVariantOrPlural(this IEnumerable<ReswItem> reswItems)
         {
