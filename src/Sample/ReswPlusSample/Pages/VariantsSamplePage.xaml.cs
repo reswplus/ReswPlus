@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 namespace ReswPlusSample.Pages
 {
     public enum PartDayEnum { MORNING = 1, AFTERNOON, EVENING, NIGHT };
-    public enum PetTypeEnum { DOG= 1, CAT };
+    public enum PetTypeEnum { DOG = 1, CAT };
 
     public sealed partial class VariantsSamplePage : Page, INotifyPropertyChanged
     {
@@ -25,7 +25,7 @@ namespace ReswPlusSample.Pages
             RaisePropertyChanged(nameof(DayPart));
         }
 
-        public PetTypeEnum PetType{ get; set; }
+        public PetTypeEnum PetType { get; set; }
 
         private void UpdatePetType(PetTypeEnum type)
         {

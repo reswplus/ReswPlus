@@ -1,9 +1,6 @@
 using CommandLine;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace ReswPlusCommand.Parameters
+namespace ReswPlusCmd.Parameters
 {
     [Verb("xml-to-resw", HelpText = "Convert a android localization XML files to resw")]
     public class AndroidToReswParameters

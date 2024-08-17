@@ -3,7 +3,6 @@
 // Source: https://github.com/DotNetPlus/ReswPlus
 
 using ReswPlus.Core.ResourceParser;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace ReswPlus.Core.Converters
+namespace ReswPlusCmd.Converters
 {
     public class AndroidXMLConverter
     {

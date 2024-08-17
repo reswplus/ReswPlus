@@ -22,7 +22,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\ICodeGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\VBCodeGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\AndroidXMLConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IErrorLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ResourceInfo\IProject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ResourceInfo\Language.cs" />

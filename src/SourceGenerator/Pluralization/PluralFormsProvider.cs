@@ -1,14 +1,19 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
-namespace ReswPlusSourceGenerator
+namespace ReswPlusSourceGenerator.Pluralization
 {
-    internal class Pluralizations
+    /// <summary>
+    /// Provides functionality to manage and retrieve pluralization rules for various languages.
+    /// </summary>
+    internal class PluralFormsProvider
     {
-        public static readonly PluralForm[] PluralForms = new[] {
-            new PluralForm() {
-                Languages = new string[] {
+        /// <summary>
+        /// A static collection of predefined plural forms and their associated languages.
+        /// </summary>
+        private static readonly PluralForm[] PluralForms = new PluralForm[] {
+            new () {
+                Languages = new [] {
                     "ak", // Akan
 			        "bh", // Bihari
 			        "guw", // Gun
@@ -19,10 +24,10 @@ namespace ReswPlusSourceGenerator
 			        "ti", // Tigrinya
 			        "wa" // Walloon
 		        },
-                Name = "IntOneOrZero"
+                Id = "IntOneOrZero"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "am", // Amharic
 			        "bn", // Bengali
 			        "ff", // Fulah
@@ -33,20 +38,20 @@ namespace ReswPlusSourceGenerator
 			        "fa", // Persian
 			        "zu", // Zulu
 		        },
-                Name = "ZeroToOne"
+                Id = "ZeroToOne"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "hy", // Armenian
 			        "fr", // French
 			        "kab", // Kabyle
 		        },
-                Name = "ZeroToTwoExcluded"
+                Id = "ZeroToTwoExcluded"
             }
 
             ,
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "af", // Afrikaans
 			        "sq", // Albanian
 			        "ast", // Asturian
@@ -147,119 +152,119 @@ namespace ReswPlusSourceGenerator
 			        "yi", // Yiddish
 			        "ji", // ji
 		        },
-                Name = "OnlyOne"
+                Id = "OnlyOne"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "si", // Sinhala
 		        },
-                Name = "Sinhala"
+                Id = "Sinhala"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "lv", // Latvian 
 			        "prg", // Prussian
 		        },
-                Name = "Latvian"
+                Id = "Latvian"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "ga", // Irish
 		        },
-                Name = "Irish"
+                Id = "Irish"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "ro", // Romanian
 			        "mo", // Moldavian
 		        },
-                Name = "Romanian"
+                Id = "Romanian"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "lt", // Lithuanian
 		        },
-                Name = "Lithuanian"
+                Id = "Lithuanian"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "ru", // Russian
 			        "uk", // Ukrainian
 			        "be", // Belarusian
 		        },
-                Name = "Slavic"
+                Id = "Slavic"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "cs", // Czech
 			        "sk", // Slovak
 		        },
-                Name = "Czech"
+                Id = "Czech"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "pl", // Polish 
 		        },
-                Name = "Polish"
+                Id = "Polish"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "sl", // Slovenian
 		        },
-                Name = "Slovenian"
+                Id = "Slovenian"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "ar", // Arabic
 		        },
-                Name = "Arabic"
+                Id = "Arabic"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "he", // Hebrew
 			        "iw", // Iw
 		        },
-                Name = "Hebrew"
+                Id = "Hebrew"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "fil", // Filipino
 			        "tl", // Tagalog
 		        },
-                Name = "Filipino"
+                Id = "Filipino"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "mk",
                 },
-                Name = "Macedonian"
+                Id = "Macedonian"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "br", // Breton
 		        },
-                Name = "Breizh"
+                Id = "Breizh"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "tzm", // Central Atlas Tamazight
 		        },
-                Name = "CentralAtlasTamazight"
+                Id = "CentralAtlasTamazight"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "ksh", //Colognian
 		        },
-                Name = "OneOrZero"
+                Id = "OneOrZero"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "lag", //Langi
 		        },
-                Name = "OneOrZeroToOneExcluded"
+                Id = "OneOrZeroToOneExcluded"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "kw", // Cornish
 			        "smn", // Inari Sami
 			        "iu", // Inuktitut
@@ -270,59 +275,80 @@ namespace ReswPlusSourceGenerator
 			        "sms", // Skolt Sami
 			        "sma", // Southern Sami
 		        },
-                Name = "OneOrTwo"
+                Id = "OneOrTwo"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "bs", // Bosnian
 			        "hr", // Croatian
 			        "sr", // Serbian
 			        "sh", // Serbo-Croatian
 		        },
-                Name = "Croat"
+                Id = "Croat"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "shi",
                 },
-                Name = "Tachelhit"
+                Id = "Tachelhit"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "is",
                 },
-                Name = "Icelandic"
+                Id = "Icelandic"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "gv",
                 },
-                Name = "Manx"
+                Id = "Manx"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "gd",
                 },
-                Name = "ScottishGaelic"
+                Id = "ScottishGaelic"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "mt", // Maltese
 		        },
-                Name = "Maltese"
+                Id = "Maltese"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "cy", // Welsh
 		        },
-                Name = "Welsh"
+                Id = "Welsh"
             },
-            new PluralForm() {
-                Languages = new string[] {
+            new () {
+                Languages = new [] {
                     "da", // Danish
 		        },
-                Name = "Danish"
+                Id = "Danish"
             }
         };
+
+        /// <summary>
+        /// Retrieves the plural forms that apply to the given list of languages.
+        /// </summary>
+        /// <param name="languages">A collection of language codes to retrieve plural forms for.</param>
+        /// <returns>An enumerable collection of <see cref="PluralForm"/> objects that match the specified languages.</returns>
+        public static IEnumerable<PluralForm> RetrievePluralFormsForLanguages(IEnumerable<string> languages)
+        {
+            foreach (var pluralForm in PluralForms)
+            {
+                var shortenLanguagesList = pluralForm.Languages.Intersect(languages).ToArray();
+                if (shortenLanguagesList.Any())
+                {
+                    yield return new PluralForm()
+                    {
+                        Id = pluralForm.Id,
+                        Languages = shortenLanguagesList
+                    };
+                }
+            }
+        }
     }
 }

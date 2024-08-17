@@ -1,17 +1,17 @@
 using CommandLine;
-using ReswPlus.Core.Converters;
 using ReswPlus.Core.ResourceParser;
-using ReswPlusCommand.Parameters;
+using ReswPlusCmd.Converters;
+using ReswPlusCmd.Parameters;
 using System;
 using System.IO;
 
-namespace ReswPlusCommand
+namespace ReswPlusCmd
 {
     class Program
     {
         static int Main(string[] args)
         {
-            int returnValue = 0;
+            var returnValue = 0;
             Parser.Default.ParseArguments<ReswToAndroidParameters, AndroidToReswParameters>(args)
                 .WithParsed((Action<ReswToAndroidParameters>)(parameters =>
                 {

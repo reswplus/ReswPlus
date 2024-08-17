@@ -125,7 +125,7 @@ namespace ReswPlus.Core.CodeGenerators
                     functionParameters.InsertRange(0, extraParameters);
                 }
 
-                if (parameters.Any(p => p is FunctionFormatTagParameter functionParam && functionParam.IsVariantId) || extraParameters.Any(p=>p.IsVariantId))
+                if (parameters.Any(p => p is FunctionFormatTagParameter functionParam && functionParam.IsVariantId) || extraParameters.Any(p => p.IsVariantId))
                 {
                     // one of the parameter is a variantId, we must create a second method with object as the variantId type.
                     var genericParametersStr = functionParameters.Select(p => (p.IsVariantId ? "object" : GetParameterTypeString(p.Type)) + " " + p.Name).Aggregate((a, b) => a + ", " + b);

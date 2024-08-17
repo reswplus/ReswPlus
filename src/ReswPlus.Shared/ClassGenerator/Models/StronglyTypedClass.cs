@@ -1,14 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReswPlus.Core.ClassGenerator.Models
 {
     public class StronglyTypedClass
     {
-        public bool IsAdvanced{ get; set; }
+        public bool IsAdvanced { get; set; }
         public string[] Namespaces { get; set; }
         public string ResoureFile { get; set; }
         public string ClassName { get; set; }

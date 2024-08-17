@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<LangVersion>9.0</LangVersion>
+		<LangVersion>11.0</LangVersion>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<IncludeBuildOutput>false</IncludeBuildOutput>
@@ -74,9 +74,7 @@
 		<None Include="Images\Icon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.10.0" />
-		<PackageReference Include="System.CodeDom" Version="5.0.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />

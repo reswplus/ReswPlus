@@ -1,14 +1,10 @@
-// ------------------------------------------------------
-// Copyright (C) Microsoft. All rights reserved.
-// ------------------------------------------------------
-
 using ReswPlus.Core.ResourceInfo;
 
-namespace ReswPlusSourceGenerator
+namespace ReswPlusSourceGenerator.Models
 {
-    public class SourceGeneratorProject : IProject
+    public class Project : IProject
     {
-        public SourceGeneratorProject(string name, bool isLibrary)
+        public Project(string name, bool isLibrary)
         {
             Name = name;
             IsLibrary = isLibrary;

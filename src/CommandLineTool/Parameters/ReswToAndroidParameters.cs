@@ -1,10 +1,6 @@
 using CommandLine;
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 
-namespace ReswPlusCommand.Parameters
+namespace ReswPlusCmd.Parameters
 {
     [Verb("resw-to-xml", HelpText = "Convert a single resw file to Android XML format")]
     public class ReswToAndroidParameters

@@ -2,17 +2,26 @@
 // Licensed under the MIT License.
 // Source: https://github.com/DotNetPlus/ReswPlus
 
-using ReswPlus.Core.Interfaces;
+using ReswPlus.Core.ClassGenerator.Models;
+
+/* Unmerged change from project 'ReswPlusSourceGenerator'
+Before:
 using ReswPlus.Core.ClassGenerator.Models;
 using ReswPlus.Core.CodeGenerators;
+After:
+using ReswPlus.Core.CodeGenerators;
+using ReswPlus.Core.Interfaces;
+using ReswPlus.Core.ResourceInfo;
+*/
+using ReswPlus.Core.CodeGenerators;
+using ReswPlus.Core.Interfaces;
+using ReswPlus.Core.ResourceInfo;
 using ReswPlus.Core.ResourceParser;
-using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ReswPlus.Core.ResourceInfo;
-using System.Globalization;
 
 namespace ReswPlus.Core.ClassGenerator
 {
@@ -214,7 +223,7 @@ namespace ReswPlus.Core.ClassGenerator
 
             if (filesGenerated != null && filesGenerated.Any())
             {
-                result.ContainsPlural= stronglyTypedClassInfo.Localizations.Any(l => l is PluralLocalization);
+                result.ContainsPlural = stronglyTypedClassInfo.Localizations.Any(l => l is PluralLocalization);
                 result.ContainsMacro = stronglyTypedClassInfo.Localizations.Any(l => l.Parameters.Any(p => p is MacroFormatTagParameter));
             }
             return result;

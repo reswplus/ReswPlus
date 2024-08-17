@@ -1,7 +1,10 @@
-// ------------------------------------------------------
-// Copyright (C) Microsoft. All rights reserved.
-// ------------------------------------------------------
-
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Text;
+using ReswPlus.Core.ClassGenerator;
+using ReswPlus.Core.ResourceInfo;
+using ReswPlusSourceGenerator.Models;
+using ReswPlusSourceGenerator.Pluralization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,17 +12,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Text;
-using ReswPlus.Core.ClassGenerator;
-using ReswPlus.Core.ResourceInfo;
 
 namespace ReswPlusSourceGenerator
 {
 
     [Generator]
-    public partial class SidecarConnectorGenerator : ISourceGenerator
+    public partial class ReswGenerator : ISourceGenerator
     {
         public void Initialize(GeneratorInitializationContext context)
         {
@@ -134,11 +132,11 @@ namespace ReswPlusSourceGenerator
                     }
                 }
 
-                var resourceFileInfo = new ResourceFileInfo(file, new SourceGeneratorProject(context.Compilation.AssemblyName, isLibrary));
+                var resourceFileInfo = new ResourceFileInfo(file, new Project(context.Compilation.AssemblyName, isLibrary));
                 var codeGenerator = ReswClassGenerator.CreateGenerator(resourceFileInfo, null);
                 var generatedData = codeGenerator.GenerateCode(
-                    baseFilename:Path.GetFileName(file).Split('.')[0],
-                    content:File.ReadAllText(file), defaultNamespace: namespaceForReswFile,
+                    baseFilename: Path.GetFileName(file).Split('.')[0],
+                    content: File.ReadAllText(file), defaultNamespace: namespaceForReswFile,
                     isAdvanced: true);
 
                 foreach (var generatedFile in generatedData.Files)
@@ -166,21 +164,21 @@ namespace ReswPlusSourceGenerator
         {
             var pluralFileToAdd = new List<PluralForm>();
             var pluralSelectorCode = "default:\n  return new ReswPlusLib.Providers.OtherProvider();\n";
-            foreach (var pluralFile in Pluralizations.PluralForms)
+            foreach (var pluralFile in PluralFormsProvider.RetrievePluralFormsForLanguages(languagesSupported))
             {
                 if (!pluralFile.Languages.Any(p => languagesSupported.Contains(p)))
                 {
                     continue;
                 }
                 pluralFileToAdd.Add(pluralFile);
-                var pluralFileSource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"ReswPlusSourceGenerator.Templates.Plurals.{pluralFile.Name}Provider.txt");
-                context.AddSource($"{pluralFile.Name}Provider.cs", SourceText.From(ReadAllText(pluralFileSource), Encoding.UTF8));
+                var pluralFileSource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"ReswPlusSourceGenerator.Templates.Plurals.{pluralFile.Id}Provider.txt");
+                context.AddSource($"{pluralFile.Id}Provider.cs", SourceText.From(ReadAllText(pluralFileSource), Encoding.UTF8));
 
                 foreach (var lng in pluralFile.Languages)
                 {
                     pluralSelectorCode += $"case \"{lng}\":\n";
                 }
-                pluralSelectorCode += $"  return new ReswPlusLib.Providers.{pluralFile.Name}Provider();\n";
+                pluralSelectorCode += $"  return new ReswPlusLib.Providers.{pluralFile.Id}Provider();\n";
             }
 
             var pluralOtherFileSource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"ReswPlusSourceGenerator.Templates.Plurals.OtherProvider.txt");

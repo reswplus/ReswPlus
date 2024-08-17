@@ -1,8 +1,4 @@
-using ReswPlus.Core.ClassGenerator;
 using ReswPlus.Core.ResourceParser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace ReswPlusUnitTests
