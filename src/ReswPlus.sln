@@ -21,12 +21,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReswPlusSample", "Sample\Re
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ReswPlus.Shared", "ReswPlus.Shared\ReswPlus.Shared.shproj", "{1A6FF0BD-991A-417E-A79D-98EBB4208816}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0E2BD887-E1E2-4BDC-9C86-6A649DDEEFFE}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		ReswPlus.Shared\ReswPlus.Shared.projitems*{1a6ff0bd-991a-417e-a79d-98ebb4208816}*SharedItemsImports = 13
-		ReswPlus.Shared\ReswPlus.Shared.projitems*{9ca1abbd-ee51-4839-860a-87a475421bb6}*SharedItemsImports = 5
-		ReswPlus.Shared\ReswPlus.Shared.projitems*{df27faec-348d-41d0-8e62-29e6240e8b34}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -165,5 +165,10 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F326D253-1AC6-4224-8FFF-FB419F0980D8}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ReswPlus.Shared\ReswPlus.Shared.projitems*{1a6ff0bd-991a-417e-a79d-98ebb4208816}*SharedItemsImports = 13
+		ReswPlus.Shared\ReswPlus.Shared.projitems*{9ca1abbd-ee51-4839-860a-87a475421bb6}*SharedItemsImports = 5
+		ReswPlus.Shared\ReswPlus.Shared.projitems*{df27faec-348d-41d0-8e62-29e6240e8b34}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

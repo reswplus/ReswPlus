@@ -1,15 +1,10 @@
-// Copyright (c) Rudy Huyn. All rights reserved.
-// Licensed under the MIT License.
-// Source: https://github.com/DotNetPlus/ReswPlus
-
 using System;
 
-namespace ReswPlus.Core
+namespace ReswPlus.Core;
+
+public sealed class Constants
 {
-    public sealed class Constants
-    {
-        public const string ReswPlusName = "DotNetPlus.ReswPlus";
-        public const string ReswPlusExtensionVersion = "2.1.3";
-        public static Version ReswPlusLibMinVersion = new(1, 0, 0);
-    }
+    public const string ReswPlusName = "DotNetPlus.ReswPlus";
+    public const string ReswPlusExtensionVersion = "2.1.3";
+    public static Version ReswPlusLibMinVersion = new(1, 0, 0);
 }

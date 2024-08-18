@@ -1,16 +1,15 @@
-namespace ReswPlus.Core.ResourceParser
+namespace ReswPlus.Core.ResourceParser;
+
+public enum ParameterType
 {
-    public enum ParameterType
-    {
-        Object,
-        Byte,
-        Int,
-        Uint,
-        Long,
-        String,
-        Double,
-        Char,
-        Ulong,
-        Decimal
-    };
-}
+    Object,
+    Byte,
+    Int,
+    Uint,
+    Long,
+    String,
+    Double,
+    Char,
+    Ulong,
+    Decimal
+};

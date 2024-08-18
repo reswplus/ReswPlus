@@ -1,8 +1,7 @@
-namespace ReswPlusSourceGenerator.Pluralization
+namespace ReswPlusSourceGenerator.Pluralization;
+
+internal record PluralForm
 {
-    internal record PluralForm
-    {
-        public string[] Languages { get; set; }
-        public string Id { get; set; }
-    }
+    public string[] Languages { get; set; }
+    public string Id { get; set; }
 }

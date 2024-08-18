@@ -1,312 +1,283 @@
-// Copyright (c) Rudy Huyn. All rights reserved.
-// Licensed under the MIT License.
-// Source: https://github.com/DotNetPlus/ReswPlus
-
-using ReswPlus.Core.ClassGenerator.Models;
-
-/* Unmerged change from project 'ReswPlusSourceGenerator'
-Before:
-using ReswPlus.Core.ClassGenerator.Models;
-using ReswPlus.Core.CodeGenerators;
-After:
-using ReswPlus.Core.CodeGenerators;
-using ReswPlus.Core.Interfaces;
-using ReswPlus.Core.ResourceInfo;
-*/
-using ReswPlus.Core.CodeGenerators;
-using ReswPlus.Core.Interfaces;
-using ReswPlus.Core.ResourceInfo;
-using ReswPlus.Core.ResourceParser;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ReswPlus.Core.ClassGenerator.Models;
+using ReswPlus.Core.CodeGenerators;
+using ReswPlus.Core.Interfaces;
+using ReswPlus.Core.ResourceInfo;
+using ReswPlus.Core.ResourceParser;
 
-namespace ReswPlus.Core.ClassGenerator
+namespace ReswPlus.Core.ClassGenerator;
+
+public class ReswClassGenerator
 {
-    public class ReswClassGenerator
+    private const string TagIgnore = "#ReswPlusIgnore";
+    private const string Deprecated_TagStrongType = "#ReswPlusTyped";
+    private const string TagFormat = "#Format";
+    private const string TagFormatDotNet = "#FormatNet";
+
+    private static readonly Regex _regexStringFormat;
+    private static readonly Regex _regexRemoveSpace = new("\\s+");
+    private static readonly Regex _regexDotNetFormatting = new(@"(?<!{){\d+(,-?\d+)?(:[^}]+)?}");
+    private readonly ResourceFileInfo _resourceFileInfo;
+    private readonly ICodeGenerator _codeGenerator;
+    private readonly IErrorLogger _logger;
+
+    static ReswClassGenerator()
     {
-        private const string TagIgnore = "#ReswPlusIgnore";
-        private const string Deprecated_TagStrongType = "#ReswPlusTyped";
-        private const string TagFormat = "#Format";
-        private const string TagFormatDotNet = "#FormatNet";
+        _regexStringFormat =
+            new Regex(
+                $"(?<tag>{TagFormat}|{TagFormatDotNet})\\[" +
+                "(?<formats>(?:" +
+                     "[^\\\"]|" +
+                     "\"(?:[^\\\"]|\\\\.)*\"" +
+                     ")+" +
+                   ")" +
+                "\\]");
+    }
 
-        private static readonly Regex _regexStringFormat;
-        private static readonly Regex _regexRemoveSpace = new("\\s+");
-        private static readonly Regex _regexDotNetFormatting = new(@"(?<!{){\d+(,-?\d+)?(:[^}]+)?}");
-        private readonly ResourceFileInfo _resourceFileInfo;
-        private readonly ICodeGenerator _codeGenerator;
-        private readonly IErrorLogger _logger;
+    private ReswClassGenerator(ResourceFileInfo resourceInfo, ICodeGenerator generator, IErrorLogger logger)
+    {
+        _resourceFileInfo = resourceInfo;
+        _codeGenerator = generator;
+        _logger = logger;
+    }
 
-        static ReswClassGenerator()
+    public static ReswClassGenerator CreateGenerator(ResourceFileInfo resourceFileInfo, IErrorLogger logger)
+    {
+        ICodeGenerator codeGenerator = null;
+        switch (resourceFileInfo.Project.Language)
         {
-            _regexStringFormat =
-                new Regex(
-                    $"(?<tag>{TagFormat}|{TagFormatDotNet})\\[" +
-                    "(?<formats>(?:" +
-                         "[^\\\"]|" +
-                         "\"(?:[^\\\"]|\\\\.)*\"" +
-                         ")+" +
-                       ")" +
-                    "\\]");
+            case Language.CSHARP:
+                codeGenerator = new CSharpCodeGenerator();
+                break;
         }
 
-        private ReswClassGenerator(ResourceFileInfo resourceInfo, ICodeGenerator generator, IErrorLogger logger)
+        return codeGenerator is not null ? new ReswClassGenerator(resourceFileInfo, codeGenerator, logger) : null;
+    }
+
+    private StronglyTypedClass Parse(string content, string defaultNamespace, bool isAdvanced)
+    {
+        var namespaceToUse = ExtractNamespace(defaultNamespace);
+        var resourceFileName = Path.GetFileName(_resourceFileInfo.Path);
+        var className = Path.GetFileNameWithoutExtension(_resourceFileInfo.Path);
+        var reswInfo = ReswParser.Parse(content);
+
+        var projectNameIfLibrary = _resourceFileInfo.Project.IsLibrary ? _resourceFileInfo.Project.Name : null;
+
+        //If the resource file is in a library, the resource id in the .pri file
+        //will be <library name>/FilenameWithoutExtension
+        var resouceNameForResourceLoader = string.IsNullOrEmpty(projectNameIfLibrary) ?
+            className : projectNameIfLibrary + "/" + className;
+
+        var result = new StronglyTypedClass()
         {
-            _resourceFileInfo = resourceInfo;
-            _codeGenerator = generator;
-            _logger = logger;
-        }
+            IsAdvanced = isAdvanced,
+            ClassName = className,
+            Namespaces = namespaceToUse,
+            ResoureFile = resouceNameForResourceLoader
+        };
 
-        public static ReswClassGenerator CreateGenerator(ResourceFileInfo resourceFileInfo, IErrorLogger logger)
+        var stringItems = reswInfo.Items
+            .Where(i => !i.Key.Contains('.') && !(i.Comment?.Contains(TagIgnore) ?? false)).ToArray();
+
+        if (isAdvanced)
         {
-            ICodeGenerator codeGenerator = null;
-            switch (resourceFileInfo.Project.Language)
+            //check Pluralization
+            var itemsWithPluralOrVariant = reswInfo.Items.GetItemsWithVariantOrPlural();
+            var basicItems = stringItems.Except(itemsWithPluralOrVariant.SelectMany(e => e.Items)).ToArray();
+
+            foreach (var item in itemsWithPluralOrVariant)
             {
-                case Language.CSHARP:
-                    codeGenerator = new CSharpCodeGenerator();
-                    break;
-            }
-            if (codeGenerator is not null)
-            {
-                return new ReswClassGenerator(resourceFileInfo, codeGenerator, logger);
-            }
-            return null;
-        }
-
-        private StronglyTypedClass Parse(string content, string defaultNamespace, bool isAdvanced)
-        {
-            var namespaceToUse = ExtractNamespace(defaultNamespace);
-            var resourceFileName = Path.GetFileName(_resourceFileInfo.Path);
-            var className = Path.GetFileNameWithoutExtension(_resourceFileInfo.Path);
-            var reswInfo = ReswParser.Parse(content);
-
-            var projectNameIfLibrary = _resourceFileInfo.Project.IsLibrary ? _resourceFileInfo.Project.Name : null;
-
-            //If the resource file is in a library, the resource id in the .pri file
-            //will be <library name>/FilenameWithoutExtension
-            var resouceNameForResourceLoader = string.IsNullOrEmpty(projectNameIfLibrary) ?
-                className : projectNameIfLibrary + "/" + className;
-
-
-            var result = new StronglyTypedClass()
-            {
-                IsAdvanced = isAdvanced,
-                ClassName = className,
-                Namespaces = namespaceToUse,
-                ResoureFile = resouceNameForResourceLoader
-            };
-
-            var stringItems = reswInfo.Items
-                .Where(i => !i.Key.Contains(".") && !(i.Comment?.Contains(TagIgnore) ?? false)).ToArray();
-
-            if (isAdvanced)
-            {
-                //check Pluralization
-                var itemsWithPluralOrVariant = reswInfo.Items.GetItemsWithVariantOrPlural();
-                var basicItems = stringItems.Except(itemsWithPluralOrVariant.SelectMany(e => e.Items)).ToArray();
-
-                foreach (var item in itemsWithPluralOrVariant)
+                if (item.SupportPlural)
                 {
-                    if (item.SupportPlural)
-                    {
-                        var idNone = item.Key + "_None";
-                        var hasNoneForm = reswInfo.Items.Any(i => i.Key == idNone);
+                    var idNone = item.Key + "_None";
+                    var hasNoneForm = reswInfo.Items.Any(i => i.Key == idNone);
 
-                        var singleLineValue = _regexRemoveSpace.Replace(item.Items.FirstOrDefault().Value, " ").Trim();
+                    var singleLineValue = _regexRemoveSpace.Replace(item.Items.FirstOrDefault().Value, " ").Trim();
 
-                        var summary = $"Get the pluralized version of the string similar to: {singleLineValue}";
+                    var summary = $"Get the pluralized version of the string similar to: {singleLineValue}";
 
-                        PluralLocalization localization;
-                        if (item.SupportVariants)
-                        {
-                            localization = new PluralVariantLocalization()
-                            {
-                                Key = item.Key,
-                                Summary = summary,
-                                SupportNoneState = hasNoneForm,
-                            };
-                        }
-                        else
-                        {
-                            localization = new PluralLocalization()
-                            {
-                                Key = item.Key,
-                                Summary = summary,
-                                SupportNoneState = hasNoneForm,
-                            };
-                        }
-                        if (item.Items.Any(i => i.Comment != null && i.Comment.Contains(Deprecated_TagStrongType)))
-                        {
-                            _logger?.LogError($"{Deprecated_TagStrongType} is no more supported, use {TagFormat} instead. See https://github.com/DotNetPlus/ReswPlus/blob/master/README.md");
-                        }
-                        var commentToUse =
-                            item.Items.FirstOrDefault(i => i.Comment != null && _regexStringFormat.IsMatch(i.Comment));
-
-                        ManageFormattedFunction(localization, commentToUse?.Comment, basicItems, resourceFileName);
-
-                        result.Localizations.Add(localization);
-                    }
-                    else if (item.SupportVariants)
-                    {
-                        var singleLineValue = _regexRemoveSpace.Replace(item.Items.FirstOrDefault().Value, " ").Trim();
-                        var summary = $"Get the variant version of the string similar to: {singleLineValue}";
-                        var commentToUse = item.Items.FirstOrDefault(i => i.Comment != null && _regexStringFormat.IsMatch(i.Comment));
-
-                        var localization = new VariantLocalization()
+                    var localization = item.SupportVariants
+                        ? new PluralVariantLocalization()
                         {
                             Key = item.Key,
                             Summary = summary,
+                            SupportNoneState = hasNoneForm,
+                        }
+                        : new PluralLocalization()
+                        {
+                            Key = item.Key,
+                            Summary = summary,
+                            SupportNoneState = hasNoneForm,
                         };
-
-                        ManageFormattedFunction(localization, commentToUse?.Comment, basicItems, resourceFileName);
-
-                        result.Localizations.Add(localization);
+                    if (item.Items.Any(i => i.Comment != null && i.Comment.Contains(Deprecated_TagStrongType)))
+                    {
+                        _logger?.LogError($"{Deprecated_TagStrongType} is no more supported, use {TagFormat} instead. See https://github.com/DotNetPlus/ReswPlus/blob/master/README.md");
                     }
+                    var commentToUse =
+                        item.Items.FirstOrDefault(i => i.Comment != null && _regexStringFormat.IsMatch(i.Comment));
+
+                    _ = ManageFormattedFunction(localization, commentToUse?.Comment, basicItems, resourceFileName);
+
+                    result.Items.Add(localization);
                 }
-
-                stringItems = basicItems;
-            }
-
-            if (stringItems.Any())
-            {
-                foreach (var item in stringItems)
+                else if (item.SupportVariants)
                 {
-                    var singleLineValue = _regexRemoveSpace.Replace(item.Value, " ").Trim();
-                    var summary = $"Looks up a localized string similar to: {singleLineValue}";
+                    var singleLineValue = _regexRemoveSpace.Replace(item.Items.FirstOrDefault().Value, " ").Trim();
+                    var summary = $"Get the variant version of the string similar to: {singleLineValue}";
+                    var commentToUse = item.Items.FirstOrDefault(i => i.Comment != null && _regexStringFormat.IsMatch(i.Comment));
 
-                    var localization = new RegularLocalization()
+                    var localization = new VariantLocalization()
                     {
                         Key = item.Key,
                         Summary = summary,
                     };
 
-                    if (isAdvanced)
-                    {
-                        ManageFormattedFunction(localization, item.Comment, stringItems, resourceFileName);
-                    }
-                    result.Localizations.Add(localization);
+                    _ = ManageFormattedFunction(localization, commentToUse?.Comment, basicItems, resourceFileName);
+
+                    result.Items.Add(localization);
                 }
             }
 
-            return result;
+            stringItems = basicItems;
         }
 
-        private bool IsDotNetFormatting(string source)
+        if (stringItems.Any())
         {
-            return _regexDotNetFormatting.IsMatch(source);
+            foreach (var item in stringItems)
+            {
+                var singleLineValue = _regexRemoveSpace.Replace(item.Value, " ").Trim();
+                var summary = $"Looks up a localized string similar to: {singleLineValue}";
+
+                var localization = new RegularLocalization()
+                {
+                    Key = item.Key,
+                    Summary = summary,
+                };
+
+                if (isAdvanced)
+                {
+                    _ = ManageFormattedFunction(localization, item.Comment, stringItems, resourceFileName);
+                }
+                result.Items.Add(localization);
+            }
         }
 
-        public GenerationResult GenerateCode(string baseFilename, string content, string defaultNamespace, bool isAdvanced)
-        {
-            var stronglyTypedClassInfo = Parse(content, defaultNamespace, isAdvanced);
-            if (stronglyTypedClassInfo == null)
-            {
-                return null;
-            }
-
-            var filesGenerated = _codeGenerator.GetGeneratedFiles(baseFilename, stronglyTypedClassInfo, _resourceFileInfo);
-            var result = new GenerationResult()
-            {
-                Files = filesGenerated
-            };
-
-            if (filesGenerated != null && filesGenerated.Any())
-            {
-                result.ContainsPlural = stronglyTypedClassInfo.Localizations.Any(l => l is PluralLocalization);
-                result.ContainsMacro = stronglyTypedClassInfo.Localizations.Any(l => l.Parameters.Any(p => p is MacroFormatTagParameter));
-            }
-            return result;
-        }
-
-        private string[] ExtractNamespace(string defaultNamespace)
-        {
-            if (string.IsNullOrEmpty(defaultNamespace))
-            {
-                return new string[0];
-            }
-
-            // remove bcp47 tag from the namespace
-            var splittedNamespace = defaultNamespace.Split('.');
-            var lastNamespace = splittedNamespace.Last().Replace('_', '-');
-            var culture = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(c => string.Compare(c.Name, lastNamespace, true) == 0);
-            if (culture != null)
-            {
-                return splittedNamespace.Take(splittedNamespace.Length - 1).ToArray();
-            }
-
-            return splittedNamespace;
-        }
-
-        public static (string format, bool isDotNetFormatting) ParseTag(string comment)
-        {
-            if (!string.IsNullOrWhiteSpace(comment))
-            {
-                var match = _regexStringFormat.Match(comment);
-                if (match.Success)
-                {
-                    var tag = match.Groups["tag"].Value;
-                    return (match.Groups["formats"].Value.Trim(), tag == TagFormatDotNet);
-                }
-            }
-            return (null, false);
-        }
-
-        private bool ManageFormattedFunction(Localization localization, string comment, IEnumerable<ReswItem> basicLocalizedItems, string resourceName)
-        {
-            FunctionFormatTagParametersInfo tagTypedInfo = null;
-            var (format, isDotNetFormatting) = ParseTag(comment);
-            if (format != null)
-            {
-                localization.IsDotNetFormatting = isDotNetFormatting;
-                var types = FormatTag.SplitParameters(format);
-                tagTypedInfo = FormatTag.ParseParameters(localization.Key, types, basicLocalizedItems, resourceName, _logger);
-                if (tagTypedInfo != null)
-                {
-                    localization.Parameters = tagTypedInfo.Parameters;
-                }
-            }
-
-            if (localization is IVariantLocalization variantLocalization)
-            {
-                FunctionFormatTagParameter variantParameter = null;
-                // Add an extra parameter for variant if necessary
-                if (tagTypedInfo?.VariantParameter == null)
-                {
-                    variantParameter = new FunctionFormatTagParameter
-                    { Type = ParameterType.Long, Name = "variantId", IsVariantId = true };
-                    localization.ExtraParameters.Add(variantParameter);
-                }
-                else
-                {
-                    variantParameter = tagTypedInfo.VariantParameter;
-                }
-
-                variantLocalization.ParameterToUseForVariant = variantParameter;
-
-            }
-
-            if (localization is PluralLocalization pluralLocalization)
-            {
-                FunctionFormatTagParameter pluralizationQuantifier = null;
-                // Add an extra parameter for pluralization if necessary
-                if (tagTypedInfo?.PluralizationParameter == null)
-                {
-                    pluralizationQuantifier = new FunctionFormatTagParameter
-                    { Type = ParameterType.Double, Name = "pluralizationReferenceNumber" };
-                    pluralLocalization.ExtraParameters.Add(pluralizationQuantifier);
-                }
-                else
-                {
-                    pluralizationQuantifier = tagTypedInfo.PluralizationParameter;
-                }
-
-                pluralLocalization.ParameterToUseForPluralization = pluralizationQuantifier;
-            }
-
-            return true;
-        }
-
+        return result;
     }
+
+    private bool IsDotNetFormatting(string source)
+    {
+        return _regexDotNetFormatting.IsMatch(source);
+    }
+
+    public GenerationResult GenerateCode(string baseFilename, string content, string defaultNamespace, bool isAdvanced)
+    {
+        var stronglyTypedClassInfo = Parse(content, defaultNamespace, isAdvanced);
+        if (stronglyTypedClassInfo == null)
+        {
+            return null;
+        }
+
+        var filesGenerated = _codeGenerator.GetGeneratedFiles(baseFilename, stronglyTypedClassInfo, _resourceFileInfo);
+        var result = new GenerationResult()
+        {
+            Files = filesGenerated
+        };
+
+        if (filesGenerated is not null && filesGenerated.Any())
+        {
+            result.ContainsPlural = stronglyTypedClassInfo.Items.Any(l => l is PluralLocalization);
+            result.ContainsMacro = stronglyTypedClassInfo.Items.Any(l => l.Parameters.Any(p => p is MacroFormatTagParameter));
+        }
+        return result;
+    }
+
+    private string[] ExtractNamespace(string defaultNamespace)
+    {
+        if (string.IsNullOrEmpty(defaultNamespace))
+        {
+            return Array.Empty<string>();
+        }
+
+        // remove bcp47 tag from the namespace
+        var splittedNamespace = defaultNamespace.Split('.');
+        var lastNamespace = splittedNamespace.Last().Replace('_', '-');
+        var culture = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(c => string.Compare(c.Name, lastNamespace, true) == 0);
+        return culture is not null ? splittedNamespace.Take(splittedNamespace.Length - 1).ToArray() : splittedNamespace;
+    }
+
+    public static (string format, bool isDotNetFormatting) ParseTag(string comment)
+    {
+        if (!string.IsNullOrWhiteSpace(comment))
+        {
+            var match = _regexStringFormat.Match(comment);
+            if (match.Success)
+            {
+                var tag = match.Groups["tag"].Value;
+                return (match.Groups["formats"].Value.Trim(), tag == TagFormatDotNet);
+            }
+        }
+        return (null, false);
+    }
+
+    private bool ManageFormattedFunction(Localization localization, string comment, IEnumerable<ReswItem> basicLocalizedItems, string resourceName)
+    {
+        FunctionFormatTagParametersInfo tagTypedInfo = null;
+        var (format, isDotNetFormatting) = ParseTag(comment);
+        if (format != null)
+        {
+            localization.IsDotNetFormatting = isDotNetFormatting;
+            var types = FormatTag.SplitParameters(format);
+            tagTypedInfo = FormatTag.ParseParameters(localization.Key, types, basicLocalizedItems, resourceName, _logger);
+            if (tagTypedInfo != null)
+            {
+                localization.Parameters = tagTypedInfo.Parameters;
+            }
+        }
+
+        if (localization is IVariantLocalization variantLocalization)
+        {
+            FunctionFormatTagParameter variantParameter;
+            // Add an extra parameter for variant if necessary
+            if (tagTypedInfo?.VariantParameter == null)
+            {
+                variantParameter = new FunctionFormatTagParameter
+                { Type = ParameterType.Long, Name = "variantId", IsVariantId = true };
+                localization.ExtraParameters.Add(variantParameter);
+            }
+            else
+            {
+                variantParameter = tagTypedInfo.VariantParameter;
+            }
+
+            variantLocalization.ParameterToUseForVariant = variantParameter;
+
+        }
+
+        if (localization is PluralLocalization pluralLocalization)
+        {
+            FunctionFormatTagParameter pluralizationQuantifier;
+            // Add an extra parameter for pluralization if necessary
+            if (tagTypedInfo?.PluralizationParameter == null)
+            {
+                pluralizationQuantifier = new FunctionFormatTagParameter
+                { Type = ParameterType.Double, Name = "pluralizationReferenceNumber" };
+                pluralLocalization.ExtraParameters.Add(pluralizationQuantifier);
+            }
+            else
+            {
+                pluralizationQuantifier = tagTypedInfo.PluralizationParameter;
+            }
+
+            pluralLocalization.ParameterToUseForPluralization = pluralizationQuantifier;
+        }
+
+        return true;
+    }
+
 }
