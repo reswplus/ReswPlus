@@ -1,4 +1,4 @@
-namespace ReswPlusLib.Utils
+namespace ReswPlus.Utils
 {
     internal static class IntExtension
     {

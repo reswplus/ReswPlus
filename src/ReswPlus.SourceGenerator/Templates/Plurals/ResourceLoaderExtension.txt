@@ -1,5 +1,5 @@
-using ReswPlusLib.Interfaces;
-using ReswPlusLib.Utils;
+using ReswPlus.Interfaces;
+using ReswPlus.Utils;
 using System.Globalization;
 using System;
 
@@ -7,7 +7,7 @@ using System;
 using Microsoft.Extensions.Localization;
 #endif
 
-#if WINRT || DOTNETCORE || NETSTANDARD
+#if WINRT || DOTNETCORE || NETSTANDARD || NETCOREAPP
 using System.Resources;
 #endif
 
@@ -15,7 +15,11 @@ using System.Resources;
 using Windows.ApplicationModel.Resources;
 #endif
 
-namespace ReswPlusLib
+#if NETCOREAPP
+using Microsoft.Windows.ApplicationModel.Resources;
+#endif
+
+namespace ReswPlus
 {
     public static class ResourceLoaderExtension
     {
@@ -29,7 +33,7 @@ namespace ReswPlusLib
         }
 #endif
 
-#if WINRT || WINDOWS_UWP
+#if WINRT || WINDOWS_UWP || NETCOREAPP
         public static string GetPlural(this ResourceLoader resource, string key, double number, bool supportNoneState)
         {
             return GetPluralInternal<ResourceLoader>((reskey) => resource.GetString(reskey), key, number, supportNoneState);

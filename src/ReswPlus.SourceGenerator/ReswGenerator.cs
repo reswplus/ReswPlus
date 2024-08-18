@@ -36,6 +36,7 @@ public partial class ReswSourceGenerator : ISourceGenerator
         {
             languages.Add(defaultLanguage);
         }
+
         if (!"en-us".Equals(defaultLanguage, StringComparison.InvariantCultureIgnoreCase))
         {
             languages.Add("en-us");
@@ -64,6 +65,14 @@ public partial class ReswSourceGenerator : ISourceGenerator
 
     public void Execute(GeneratorExecutionContext context)
     {
+
+#if DEBUG
+        if (!Debugger.IsAttached)
+        {
+            // Uncomment to debug
+            // Debugger.Launch();
+        }
+#endif
         if (context.Compilation is not CSharpCompilation csharpCompilation)
         {
             // the converter only support C# for the moment
@@ -77,35 +86,67 @@ public partial class ReswSourceGenerator : ISourceGenerator
             return;
         }
 
-        // retrieve the project settings.
-        if (!context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.DefaultLanguage", out var projectDefaultLanguage)
-            || !context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out var projectRootNamespace)
-            || !context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.MSBuildProjectFullPath", out var projectFileFullPath)
-            || !context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.OutputType", out var outputType))
+        // retrieve the project path
+        if (!context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.projectdir", out var projectRootPath))
+        {
+            if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.MSBuildProjectFullPath", out var projectFileFullPath))
+            {
+                projectRootPath = Path.GetDirectoryName(projectFileFullPath);
+            }
+            else
+            {
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(
+                   "RP0003",
+                   "Root path missing",
+                   "Can't retrieve the root path of the project",
+                   "ReswPlus.Errors",
+                   DiagnosticSeverity.Error,
+                   true), null));
+                return;
+            }
+        }
+
+        bool isLibrary = false;
+        if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.OutputType", out var outputType))
+        {
+            isLibrary = outputType.Equals("library", StringComparison.InvariantCultureIgnoreCase)
+                || outputType.Equals("module", StringComparison.InvariantCultureIgnoreCase);
+        }
+        else
+        {
+            if (context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.projecttypeguids", out var projectTypeGuidsValue))
+            {
+                isLibrary = projectTypeGuidsValue.Equals("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}", StringComparison.OrdinalIgnoreCase)
+                    || projectTypeGuidsValue.Equals("{BC8A1FFA-BEE3-4634-8014-F334798102B3}", StringComparison.OrdinalIgnoreCase);
+            }
+            else
+            {
+                // Unable to determine if the project is a library; assuming it is an application
+                context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(
+                    "RP0004",
+                    "Unknown Project Type",
+                    "ReswPlus cannot determine the project type, defaulting to application.",
+                    "ReswPlus.Info",
+                    DiagnosticSeverity.Info,
+                    isEnabledByDefault: true), Location.None));
+            }
+        }
+
+        // retrieve the default language (optional)
+        context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.DefaultLanguage", out var projectDefaultLanguage);
+
+        if (!context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.RootNamespace", out var projectRootNamespace))
         {
             // error
             context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(
              "RP0002",
-             "Build properties missing",
-             "Build properties are not exposed to ReswPlus source generator",
+             "Unknown namespace",
+             "ReswPlus cannot determine the namespace.",
              "ReswPlus.Errors",
              DiagnosticSeverity.Error,
              true), null));
             return;
         }
-
-#if DEBUG
-        if (!Debugger.IsAttached)
-        {
-            // Uncomment to debug
-            // Debugger.Launch();
-        }
-#endif
-
-        var isLibrary = outputType.Equals("library", StringComparison.InvariantCultureIgnoreCase)
-            || outputType.Equals("module", StringComparison.InvariantCultureIgnoreCase);
-
-        var projectRootPath = Path.GetDirectoryName(projectFileFullPath);
 
         var allResourceFiles = (from f in context.AdditionalFiles
                                 where Path.GetExtension(f.Path).Equals(".resw", StringComparison.InvariantCultureIgnoreCase)
@@ -170,7 +211,7 @@ public partial class ReswSourceGenerator : ISourceGenerator
 
     private static void AddLanguageSupport(GeneratorExecutionContext context, string[] languagesSupported)
     {
-        var pluralSelectorCode = "default:\n  return new ReswPlusLib.Providers.OtherProvider();\n";
+        var pluralSelectorCode = "default:\n  return new ReswPlus.Providers.OtherProvider();\n";
         var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
         foreach (var pluralFile in PluralFormsProvider.RetrievePluralFormsForLanguages(languagesSupported))
         {
@@ -181,7 +222,7 @@ public partial class ReswSourceGenerator : ISourceGenerator
             {
                 pluralSelectorCode += $"case \"{lng}\":\n";
             }
-            pluralSelectorCode += $"  return new ReswPlusLib.Providers.{pluralFile.Id}Provider();\n";
+            pluralSelectorCode += $"  return new ReswPlus.Providers.{pluralFile.Id}Provider();\n";
         }
 
         var pluralOtherFileSource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{assemblyName}.Templates.Plurals.OtherProvider.txt");

@@ -15,14 +15,17 @@ public class CodeStringBuilder
         _indentString = indentString;
     }
 
-    public CodeStringBuilder AppendLine(string value)
+    public CodeStringBuilder AppendLine(string value, bool addSpaces = true)
     {
-        AddSpace(_level);
+        if (addSpaces)
+        {
+            AddSpaces(_level);
+        }
         _ = _stringBuilder.AppendLine(value);
         return this;
     }
 
-    private void AddSpace(uint level)
+    private void AddSpaces(uint level)
     {
         for (var i = 0; i < level; ++i)
         {

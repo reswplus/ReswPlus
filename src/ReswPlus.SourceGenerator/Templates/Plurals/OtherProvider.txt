@@ -1,7 +1,7 @@
-using ReswPlusLib.Interfaces;
+using ReswPlus.Interfaces;
 
 
-namespace ReswPlusLib.Providers
+namespace ReswPlus.Providers
 {
     internal class OtherProvider : IPluralProvider
     {

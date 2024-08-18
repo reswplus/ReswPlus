@@ -6,5 +6,5 @@ public sealed class Constants
 {
     public const string ReswPlusName = "DotNetPlus.ReswPlus";
     public const string ReswPlusExtensionVersion = "2.1.3";
-    public static Version ReswPlusLibMinVersion = new(1, 0, 0);
+    public static Version ReswPlusMinVersion = new(1, 0, 0);
 }

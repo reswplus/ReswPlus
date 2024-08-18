@@ -1,7 +1,7 @@
-using ReswPlusLib.Utils;
-using ReswPlusLib.Interfaces;
+using ReswPlus.Utils;
+using ReswPlus.Interfaces;
 
-namespace ReswPlusLib.Providers
+namespace ReswPlus.Providers
 {
     internal class ZeroToOneProvider : IPluralProvider
     {

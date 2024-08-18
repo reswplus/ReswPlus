@@ -1,4 +1,4 @@
-namespace ReswPlusLib
+namespace ReswPlus
 {
     public enum PluralTypeEnum
     {

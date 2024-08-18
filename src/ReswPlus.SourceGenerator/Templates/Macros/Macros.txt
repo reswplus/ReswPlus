@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
 using Windows.ApplicationModel;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System.Profile;
@@ -11,7 +11,7 @@ using Windows.System.Profile;
 using System.Reflection;
 #endif
 
-namespace ReswPlusLib
+namespace ReswPlus
 {
     public static class Macros
     {
@@ -181,7 +181,7 @@ namespace ReswPlusLib
         #endregion
 
 
-#if WINDOWS_UWP || DOTNETCORE
+#if WINDOWS_UWP || DOTNETCORE || NETCOREAPP
         #region App Version: Full
         private static string _appVersionFull = null;
         public static string AppVersionFull
@@ -190,7 +190,7 @@ namespace ReswPlusLib
             {
                 if (_appVersionFull == null)
                 {
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
                     var version = Package.Current.Id.Version;
 #endif
 #if DOTNETCORE
@@ -204,7 +204,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP || DOTNETCORE
+#if WINDOWS_UWP || DOTNETCORE || NETCOREAPP
         #region App Version: Major.Minor.Build
         private static string _appVersionMajorMinorBuild = null;
         public static string AppVersionMajorMinorBuild
@@ -213,7 +213,7 @@ namespace ReswPlusLib
             {
                 if (_appVersionMajorMinorBuild == null)
                 {
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
                     var version = Package.Current.Id.Version;
 #endif
 #if DOTNETCORE
@@ -227,7 +227,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP || DOTNETCORE
+#if WINDOWS_UWP || DOTNETCORE || NETCOREAPP
         #region App Version: Major.Minor
         private static string _appVersionMajorMinor = null;
         public static string AppVersionMajorMinor
@@ -236,7 +236,7 @@ namespace ReswPlusLib
             {
                 if (_appVersionMajorMinor == null)
                 {
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
                     var version = Package.Current.Id.Version;
 #endif
 #if DOTNETCORE
@@ -250,7 +250,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP || DOTNETCORE
+#if WINDOWS_UWP || DOTNETCORE || NETCOREAPP
         #region App Version: Major
         private static string _appVersionMajor = null;
         public static string AppVersionMajor
@@ -259,7 +259,7 @@ namespace ReswPlusLib
             {
                 if (_appVersionMajor == null)
                 {
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
                     var version = Package.Current.Id.Version;
 #endif
 #if DOTNETCORE
@@ -273,7 +273,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
         #region Architecture
         private static string _architecture = null;
         public static string Architecture
@@ -311,7 +311,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP || DOTNETCORE
+#if WINDOWS_UWP || DOTNETCORE || NETCOREAPP
         #region ApplicationName
         private static string _applicationName = null;
         public static string ApplicationName
@@ -320,7 +320,7 @@ namespace ReswPlusLib
             {
                 if (_applicationName == null)
                 {
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
                     _applicationName = Package.Current.DisplayName;
 #endif
 #if DOTNETCORE
@@ -333,7 +333,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
         #region ApplicationName
         private static string _publisherName = null;
         public static string PublisherName
@@ -350,7 +350,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
         #region DeviceFamily
         private static string _deviceFamily = null;
         public static string DeviceFamily
@@ -367,7 +367,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
         #region DeviceManufacturer
         private static string _deviceManufacturer = null;
         public static string DeviceManufacturer
@@ -384,7 +384,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
         #region DeviceModel
         private static string _deviceModel = null;
         public static string DeviceModel
@@ -401,7 +401,7 @@ namespace ReswPlusLib
         #endregion
 #endif
 
-#if WINDOWS_UWP
+#if WINDOWS_UWP || NETCOREAPP
         #region OperatingSystem
         private static string _operatingSystemVersion = null;
         public static string OperatingSystemVersion

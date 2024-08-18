@@ -1,4 +1,4 @@
-namespace ReswPlusLib.Interfaces
+namespace ReswPlus.Interfaces
 {
     public interface IPluralProvider
     {

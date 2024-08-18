@@ -92,15 +92,17 @@ public class CSharpCodeGenerator : ICodeGenerator
     /// <param name="supportPluralization">Indicates whether pluralization support is needed.</param>
     private void GenerateHeaders(CodeStringBuilder builder, bool supportPluralization)
     {
-        _ = builder.AppendLine("// File generated automatically by ReswPlus. https://github.com/DotNetPlus/ReswPlus");
-        if (supportPluralization)
-        {
-            _ = builder.AppendLine("// The NuGet package ReswPlusLib is necessary to support Pluralization.");
-        }
-        _ = builder.AppendLine("using System;")
-            .AppendLine("using Windows.ApplicationModel.Resources;")
+        _ = builder.AppendLine("// File generated automatically by ReswPlus. https://github.com/DotNetPlus/ReswPlus")
+            .AppendLine("using System;")
+            .AppendLine("#if NETCOREAPP", false)
+            .AppendLine("using Microsoft.UI.Xaml.Markup;")
+            .AppendLine("using Microsoft.UI.Xaml.Data;")
+            .AppendLine("using Microsoft.Windows.ApplicationModel.Resources;")
+            .AppendLine("#else", false)
             .AppendLine("using Windows.UI.Xaml.Markup;")
-            .AppendLine("using Windows.UI.Xaml.Data;");
+            .AppendLine("using Windows.UI.Xaml.Data;")
+            .AppendLine("using Windows.ApplicationModel.Resources;")
+            .AppendLine("#endif", false);
     }
 
     /// <summary>
@@ -148,7 +150,11 @@ public class CSharpCodeGenerator : ICodeGenerator
             .AppendLine($"static {className}()")
             .AppendLine("{")
             .AddLevel()
+            .AppendLine("#if NETCOREAPP", false)
+            .AppendLine($"_resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), \"{resourceFilename}\");")
+            .AppendLine("#else", false)
             .AppendLine($"_resourceLoader = ResourceLoader.GetForViewIndependentUse(\"{resourceFilename}\");")
+            .AppendLine("#endif", false)
             .RemoveLevel()
             .AppendLine("}");
     }
@@ -263,7 +269,7 @@ public class CSharpCodeGenerator : ICodeGenerator
             var pluralNumber = parameterForPluralization.TypeToCast.HasValue ? $"({GetParameterTypeString(parameterForPluralization.TypeToCast.Value)}){parameterForPluralization.Name}" : parameterForPluralization.Name;
 
             var supportNoneStateStr = supportNoneState ? "true" : "false";
-            localizationStr = $"ReswPlusLib.ResourceLoaderExtension.GetPlural(_resourceLoader, {keyToUseStr}, {pluralNumber}, {supportNoneStateStr})";
+            localizationStr = $"ReswPlus.ResourceLoaderExtension.GetPlural(_resourceLoader, {keyToUseStr}, {pluralNumber}, {supportNoneStateStr})";
 
         }
         else
@@ -276,7 +282,7 @@ public class CSharpCodeGenerator : ICodeGenerator
             var formatParameters = parameters.Select(p => p switch
             {
                 FunctionFormatTagParameter functionParam => functionParam.Name,
-                MacroFormatTagParameter macroParam => $"ReswPlusLib.Macros.{macroParam.Id}",
+                MacroFormatTagParameter macroParam => $"ReswPlus.Macros.{macroParam.Id}",
                 LiteralStringFormatTagParameter constStringParameter => $"\"{constStringParameter.Value}\"",
                 StringRefFormatTagParameter localizationStringParameter => localizationStringParameter.Id,
                 _ => "",//should not happen
@@ -330,7 +336,11 @@ public class CSharpCodeGenerator : ICodeGenerator
             .AppendLine($"static {className}()")
             .AppendLine("{")
             .AddLevel()
+            .AppendLine("#if NETCOREAPP", false)
+            .AppendLine($"_resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), \"{resourceFileName}\");")
+            .AppendLine("#else", false)
             .AppendLine($"_resourceLoader = ResourceLoader.GetForViewIndependentUse(\"{resourceFileName}\");")
+            .AppendLine("#endif", false)
             .RemoveLevel()
             .AppendLine("}")
             .AppendLine("public KeyEnum Key { get; set;}")

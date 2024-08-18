@@ -178,7 +178,7 @@ public class ReswClassGenerator
     public GenerationResult GenerateCode(string baseFilename, string content, string defaultNamespace, bool isAdvanced)
     {
         var stronglyTypedClassInfo = Parse(content, defaultNamespace, isAdvanced);
-        if (stronglyTypedClassInfo == null)
+        if (stronglyTypedClassInfo is null)
         {
             return null;
         }

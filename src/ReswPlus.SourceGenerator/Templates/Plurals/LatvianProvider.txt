@@ -1,7 +1,7 @@
-using ReswPlusLib.Interfaces;
-using ReswPlusLib.Utils;
+using ReswPlus.Interfaces;
+using ReswPlus.Utils;
 
-namespace ReswPlusLib.Providers
+namespace ReswPlus.Providers
 {
     internal class LatvianProvider : IPluralProvider
     {
