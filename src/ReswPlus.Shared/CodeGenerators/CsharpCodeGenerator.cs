@@ -336,7 +336,7 @@ public class CSharpCodeGenerator : ICodeGenerator
             .AppendLine("public KeyEnum Key { get; set;}")
             .AppendLine("public IValueConverter Converter { get; set;}")
             .AppendLine("public object ConverterParameter { get; set;}")
-            .AppendLine("private  object ProvideValue()")
+            .AppendLine("protected override object ProvideValue()")
             .AppendLine("{")
             .AddLevel()
             .AppendLine("string res;")
