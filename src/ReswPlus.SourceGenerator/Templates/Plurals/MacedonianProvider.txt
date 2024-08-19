@@ -1,7 +1,6 @@
-using ReswPlus.Interfaces;
 using ReswPlus.Utils;
 
-namespace ReswPlus.Providers
+namespace ReswPlus.PluralProviders
 {
     internal class MacedonianProvider : IPluralProvider
     {

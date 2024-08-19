@@ -12,10 +12,11 @@
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <NeutralLanguage>es</NeutralLanguage>
+    <PackageIcon>Icon.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="MainPage.xaml" />
+    <None Remove="Assets\StoreLogo.ico" />
+    <None Remove="MainControl.xaml" />
     <None Remove="Pages\AdvancedPluralizationSamplePage.xaml" />
     <None Remove="Pages\BasicPluralizationSamplePage.xaml" />
     <None Remove="Pages\LiteralStringFormatSamplePage.xaml" />
@@ -29,11 +30,9 @@
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
 
@@ -53,9 +52,16 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\ReswPlus.SourceGenerator\ReswPlus.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" Private="false" />
+    <ProjectReference Include="..\ReswPlusWinAppSDKSampleExternalLibrary\ReswPlusWinAppSDKSampleExternalLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="MainPage.xaml">
+    <None Update="Assets\Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="MainControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Pages\AdvancedPluralizationSamplePage.xaml">

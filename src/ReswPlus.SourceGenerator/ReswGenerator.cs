@@ -15,6 +15,14 @@ using ReswPlus.SourceGenerator.Pluralization;
 
 namespace ReswPlus.SourceGenerator;
 
+public enum AppType
+{
+    Unknown,
+    MicrosoftResourceLoader,
+    WindowsResourceLoader,
+    ResourceManager
+}
+
 [Generator]
 public partial class ReswSourceGenerator : ISourceGenerator
 {
@@ -73,6 +81,7 @@ public partial class ReswSourceGenerator : ISourceGenerator
             // Debugger.Launch();
         }
 #endif
+
         if (context.Compilation is not CSharpCompilation csharpCompilation)
         {
             // the converter only support C# for the moment
@@ -130,6 +139,30 @@ public partial class ReswSourceGenerator : ISourceGenerator
                     DiagnosticSeverity.Info,
                     isEnabledByDefault: true), Location.None));
             }
+        }
+
+        var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+
+        var appType = RetrieveAppType(context);
+        switch (appType)
+        {
+            case AppType.MicrosoftResourceLoader:
+                AddSourceFromResource(context, $"{assemblyName}.Templates.ResourceStringProviders.MicrosoftResourceStringProvider.txt", "ResourceStringProvider.cs");
+                break;
+            case AppType.WindowsResourceLoader:
+                AddSourceFromResource(context, $"{assemblyName}.Templates.ResourceStringProviders.WindowsResourceStringProvider.txt", "ResourceStringProvider.cs");
+                break;
+            default:
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor(
+                         "RP0005",
+                         "Project type not recognized",
+                         "ReswPlus only supports UWP and WinAppSDK applications/libraries.",
+                         "ReswPlus.Errors",
+                         DiagnosticSeverity.Error,
+                         true), null));
+                }
+                break;
         }
 
         // retrieve the default language (optional)
@@ -199,7 +232,6 @@ public partial class ReswSourceGenerator : ISourceGenerator
 
             if (generatedData.ContainsPlural)
             {
-                var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
                 AddSourceFromResource(context, $"{assemblyName}.Templates.Plurals.IPluralProvider.txt", "IPluralProvider.cs");
                 AddSourceFromResource(context, $"{assemblyName}.Templates.Plurals.PluralTypeEnum.txt", "PluralTypeEnum.cs");
                 AddSourceFromResource(context, $"{assemblyName}.Templates.Utils.IntExt.txt", "IntExt.cs");
@@ -209,9 +241,24 @@ public partial class ReswSourceGenerator : ISourceGenerator
         }
     }
 
+    private AppType RetrieveAppType(GeneratorExecutionContext context)
+    {
+        if (context.Compilation.ExternalReferences.Any(r => r.Display?.IndexOf("Microsoft.WindowsAppSdk", StringComparison.OrdinalIgnoreCase) >= 0))
+        {
+            return AppType.MicrosoftResourceLoader;
+        }
+
+        if (context.Compilation.ExternalReferences.Any(r => r.Display?.IndexOf("Windows.Foundation.UniversalApiContract", StringComparison.OrdinalIgnoreCase) >= 0))
+        {
+            return AppType.WindowsResourceLoader;
+        }
+
+        return AppType.Unknown;
+    }
+
     private static void AddLanguageSupport(GeneratorExecutionContext context, string[] languagesSupported)
     {
-        var pluralSelectorCode = "default:\n  return new ReswPlus.Providers.OtherProvider();\n";
+        var pluralSelectorCode = "default:\n  return new ReswPlus.PluralProviders.OtherProvider();\n";
         var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
         foreach (var pluralFile in PluralFormsProvider.RetrievePluralFormsForLanguages(languagesSupported))
         {
@@ -222,7 +269,7 @@ public partial class ReswSourceGenerator : ISourceGenerator
             {
                 pluralSelectorCode += $"case \"{lng}\":\n";
             }
-            pluralSelectorCode += $"  return new ReswPlus.Providers.{pluralFile.Id}Provider();\n";
+            pluralSelectorCode += $"  return new ReswPlus.PluralProviders.{pluralFile.Id}Provider();\n";
         }
 
         var pluralOtherFileSource = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{assemblyName}.Templates.Plurals.OtherProvider.txt");

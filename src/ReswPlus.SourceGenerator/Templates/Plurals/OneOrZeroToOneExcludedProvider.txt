@@ -1,6 +1,5 @@
-using ReswPlus.Interfaces;
 
-namespace ReswPlus.Providers
+namespace ReswPlus.PluralProviders
 {
     internal class OneOrZeroToOneExcludedProvider : IPluralProvider
     {

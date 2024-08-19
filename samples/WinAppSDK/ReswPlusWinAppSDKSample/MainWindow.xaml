@@ -6,7 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ReswPlusWinAppSDKSample"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="ReswPlus WinAppSDK Sample"
     mc:Ignorable="d">
-
-    <Frame x:Name="RootFrame" />
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+    <local:MainControl />
 </Window>

@@ -10,38 +10,40 @@
     mc:Ignorable="d">
     <ScrollViewer>
         <StackPanel Margin="24">
-            <TextBlock Style="{StaticResource SectionDescriptionTextBlockStyle}" Text="ReswPlus generates a class exposing all strings from your .resw files as strongly typed static properties. You can then localize your applications using native bindings, standard bindings or code-behind the same way you can do it with .resx files in WPF/Silverlight applications" />
+            <StackPanel Style="{StaticResource PartStyle}">
+                <TextBlock Style="{StaticResource SectionDescriptionTextBlockStyle}" Text="ReswPlus generates a class exposing all strings from your .resw files as strongly typed static properties. You can then localize your applications using native bindings, standard bindings or code-behind the same way you can do it with .resx files in WPF/Silverlight applications" />
 
 
-            <TextBlock Style="{StaticResource LabelTextBlockStyle}" Text="Resource:" />
-            <StackPanel Style="{StaticResource SubPanelStyle}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="24" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock FontWeight="Bold" Text="Key" />
-                    <TextBlock
-                        Grid.Column="2"
-                        FontWeight="Bold"
-                        Text="Value" />
-                    <TextBlock Grid.Row="1" Text="WelcomeTitle" />
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        Text="Hello world!" />
-                </Grid>
-            </StackPanel>
-            <TextBlock Style="{StaticResource LabelTextBlockStyle}" Text="Code generated automatically by ReswPlus:" />
-            <StackPanel Style="{StaticResource SubPanelStyle}">
-                <TextBlock Style="{StaticResource DescriptionTextBlockStyle}" Text="public class Resources {&#x0a;    private static ResourceLoader _resourceLoader;&#x0a;    static Resources()&#x0a;    {&#x0a;        _resourceLoader = ResourceLoader.GetForViewIndependentUse();&#x0a;    }&#x0a;    public static string WelcomeTitle =&#x3E; _resourceLoader.GetString(&#x22;WelcomeTitle&#x22;);&#x0a;}" />
+                <TextBlock Style="{StaticResource LabelTextBlockStyle}" Text="Resource:" />
+                <StackPanel Style="{StaticResource SubPanelStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="24" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock FontWeight="Bold" Text="Key" />
+                        <TextBlock
+                            Grid.Column="2"
+                            FontWeight="Bold"
+                            Text="Value" />
+                        <TextBlock Grid.Row="1" Text="WelcomeTitle" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Text="Hello world!" />
+                    </Grid>
+                </StackPanel>
+                <TextBlock Style="{StaticResource LabelTextBlockStyle}" Text="Code generated automatically by ReswPlus:" />
+                <StackPanel Style="{StaticResource SubPanelStyle}">
+                    <TextBlock Style="{StaticResource DescriptionTextBlockStyle}" Text="public class Resources {&#x0a;    private static ResourceLoader _resourceLoader;&#x0a;    static Resources()&#x0a;    {&#x0a;        _resourceLoader = ResourceLoader.GetForViewIndependentUse();&#x0a;    }&#x0a;    public static string WelcomeTitle =&#x3E; _resourceLoader.GetString(&#x22;WelcomeTitle&#x22;);&#x0a;}" />
+                </StackPanel>
             </StackPanel>
 
             <StackPanel Style="{StaticResource PartStyle}">
@@ -113,20 +115,18 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- TODO    <StackPanel Style="{StaticResource PartStyle}">
+            <StackPanel Style="{StaticResource PartStyle}">
                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Resource from external library" />
                 <TextBlock Style="{StaticResource LabelTextBlockStyle}" Text="XAML:" />
                 <StackPanel Style="{StaticResource SubPanelStyle}">
                     <TextBlock Style="{StaticResource DescriptionTextBlockStyle}" Text="&#x3C;TextBlock Text=&#x22;{strings:Resources Key=WelcomeTitle, Converter={StaticResource ToUpperCaseConverter}}&#x22; /&#x3E;" />
                 </StackPanel>
                 <TextBlock Style="{StaticResource LabelTextBlockStyle}" Text="Results:" />
-              
+
                 <StackPanel Style="{StaticResource SubPanelStyle}">
                     <TextBlock Text="{x:Bind externalStrings:Resources.ExternalString}" />
                 </StackPanel>
-              
             </StackPanel>
-              -->
         </StackPanel>
     </ScrollViewer>
 </Page>

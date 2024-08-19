@@ -23,6 +23,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Templates\ResourceStringProviders\MicrosoftResourceStringProvider.txt" />
+	  <None Remove="Templates\ResourceStringProviders\WindowsResourceStringProvider.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Templates\ResourceStringProviders\WindowsResourceStringProvider.txt" />
+	  <EmbeddedResource Include="Templates\ResourceStringProviders\MicrosoftResourceStringProvider.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <EmbeddedResource Include="Templates\Macros\Macros.txt" />
 	</ItemGroup>
 

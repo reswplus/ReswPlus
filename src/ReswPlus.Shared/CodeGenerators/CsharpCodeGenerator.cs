@@ -146,15 +146,11 @@ public class CSharpCodeGenerator : ICodeGenerator
             .AppendLine("[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]")
             .AppendLine($"public static class {className} {{")
             .AddLevel()
-            .AppendLine("private static ResourceLoader _resourceLoader;")
+            .AppendLine("private static ReswPlus.ResourceStringProvider _resourceStringProvider;")
             .AppendLine($"static {className}()")
             .AppendLine("{")
             .AddLevel()
-            .AppendLine("#if NETCOREAPP", false)
-            .AppendLine($"_resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), \"{resourceFilename}\");")
-            .AppendLine("#else", false)
-            .AppendLine($"_resourceLoader = ResourceLoader.GetForViewIndependentUse(\"{resourceFilename}\");")
-            .AppendLine("#endif", false)
+            .AppendLine($"_resourceStringProvider = new ReswPlus.ResourceStringProvider(\"{resourceFilename}\");")
             .RemoveLevel()
             .AppendLine("}");
     }
@@ -240,7 +236,7 @@ public class CSharpCodeGenerator : ICodeGenerator
                     .AppendLine("catch")
                     .AppendLine("{")
                     .AddLevel()
-                    .AppendLine("return \"\";")
+                    .AppendLine("return string.Empty;")
                     .RemoveLevel()
                     .AppendLine("}")
                     .RemoveLevel()
@@ -269,12 +265,12 @@ public class CSharpCodeGenerator : ICodeGenerator
             var pluralNumber = parameterForPluralization.TypeToCast.HasValue ? $"({GetParameterTypeString(parameterForPluralization.TypeToCast.Value)}){parameterForPluralization.Name}" : parameterForPluralization.Name;
 
             var supportNoneStateStr = supportNoneState ? "true" : "false";
-            localizationStr = $"ReswPlus.ResourceLoaderExtension.GetPlural(_resourceLoader, {keyToUseStr}, {pluralNumber}, {supportNoneStateStr})";
+            localizationStr = $"ReswPlus.ResourceLoaderExtension.GetPlural(_resourceStringProvider, {keyToUseStr}, {pluralNumber}, {supportNoneStateStr})";
 
         }
         else
         {
-            localizationStr = $"_resourceLoader.GetString({keyToUseStr})";
+            localizationStr = $"_resourceStringProvider.GetString({keyToUseStr})";
         }
 
         if (parameters != null && parameters.Any())
@@ -332,15 +328,11 @@ public class CSharpCodeGenerator : ICodeGenerator
         _ = builder.RemoveLevel()
             .AppendLine("}")
             .AppendEmptyLine()
-            .AppendLine("private static ResourceLoader _resourceLoader;")
+            .AppendLine("private static ReswPlus.ResourceStringProvider _resourceStringProvider;")
             .AppendLine($"static {className}()")
             .AppendLine("{")
             .AddLevel()
-            .AppendLine("#if NETCOREAPP", false)
-            .AppendLine($"_resourceLoader = new ResourceLoader(ResourceLoader.GetDefaultResourceFilePath(), \"{resourceFileName}\");")
-            .AppendLine("#else", false)
-            .AppendLine($"_resourceLoader = ResourceLoader.GetForViewIndependentUse(\"{resourceFileName}\");")
-            .AppendLine("#endif", false)
+            .AppendLine($"_resourceStringProvider = new ReswPlus.ResourceStringProvider(\"{resourceFileName}\");")
             .RemoveLevel()
             .AppendLine("}")
             .AppendLine("public KeyEnum Key { get; set;}")
@@ -350,19 +342,19 @@ public class CSharpCodeGenerator : ICodeGenerator
             .AppendLine("{")
             .AddLevel()
             .AppendLine("string res;")
-            .AppendLine("if(Key == KeyEnum.__Undefined)")
+            .AppendLine("if(Key is KeyEnum.__Undefined)")
             .AppendLine("{")
             .AddLevel()
-            .AppendLine("res = \"\";")
+            .AppendLine("res = string.Empty;")
             .RemoveLevel()
             .AppendLine("}")
             .AppendLine("else")
             .AppendLine("{")
             .AddLevel()
-            .AppendLine("res = _resourceLoader.GetString(Key.ToString());")
+            .AppendLine("res = _resourceStringProvider.GetString(Key.ToString());")
             .RemoveLevel()
             .AppendLine("}")
-            .AppendLine("return Converter == null ? res : Converter.Convert(res, typeof(String), ConverterParameter, null);")
+            .AppendLine("return Converter is null ? res : Converter.Convert(res, typeof(String), ConverterParameter, null);")
             .RemoveLevel()
             .AppendLine("}")
             .RemoveLevel()

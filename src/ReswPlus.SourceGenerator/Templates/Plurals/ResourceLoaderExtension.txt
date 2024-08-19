@@ -1,4 +1,3 @@
-using ReswPlus.Interfaces;
 using ReswPlus.Utils;
 using System.Globalization;
 using System;
@@ -23,40 +22,14 @@ namespace ReswPlus
 {
     public static class ResourceLoaderExtension
     {
-        private static IPluralProvider _pluralProvider;
+        private static ReswPlus.PluralProviders.IPluralProvider _pluralProvider;
         private static readonly object _objLock = new object();
 
-#if WINRT || DOTNETCORE || NETSTANDARD
-        public static string GetPlural(this ResourceManager resource, string key, double number, bool supportNoneState = false)
-        {
-            return GetPluralInternal<ResourceManager>((reskey) => resource.GetString(reskey), key, number, supportNoneState);
-        }
-#endif
-
-#if WINRT || WINDOWS_UWP || NETCOREAPP
-        public static string GetPlural(this ResourceLoader resource, string key, double number, bool supportNoneState)
-        {
-            return GetPluralInternal<ResourceLoader>((reskey) => resource.GetString(reskey), key, number, supportNoneState);
-        }
-
-        public static string GetPlural(this ResourceLoader resource, string key, double number)
-        {
-            return GetPluralInternal<ResourceLoader>((reskey) => resource.GetString(reskey), key, number, false);
-        }
-#endif
-
-#if DOTNETCORE
-        public static string GetPlural(this IStringLocalizer resource, string key, double number, bool supportNoneState = false)
-        {
-            return GetPluralInternal<IStringLocalizer>((reskey) => resource.GetString(reskey), key, number, supportNoneState);
-        }
-#endif
-
-        private static string GetPluralInternal<T>(Func<string, string> getString, string key, double number, bool supportNoneState = false)
+        public static string GetPlural(this ReswPlus.ResourceStringProvider resourceStringProvider, string key, double number, bool supportNoneState = false)
         {
             if (supportNoneState && number == 0)
             {
-                return getString(key + "_None");
+                return resourceStringProvider.GetString(key + "_None");
             }
 
             if (_pluralProvider == null)
@@ -74,22 +47,22 @@ namespace ReswPlus
                 switch (pluralType)
                 {
                     case PluralTypeEnum.ZERO:
-                        selectedSentence = getString(key + "_Zero");
+                        selectedSentence = resourceStringProvider.GetString(key + "_Zero");
                         break;
                     case PluralTypeEnum.ONE:
-                        selectedSentence = getString(key + "_One");
+                        selectedSentence = resourceStringProvider.GetString(key + "_One");
                         break;
                     case PluralTypeEnum.OTHER:
-                        selectedSentence = getString(key + "_Other");
+                        selectedSentence = resourceStringProvider.GetString(key + "_Other");
                         break;
                     case PluralTypeEnum.TWO:
-                        selectedSentence = getString(key + "_Two");
+                        selectedSentence = resourceStringProvider.GetString(key + "_Two");
                         break;
                     case PluralTypeEnum.FEW:
-                        selectedSentence = getString(key + "_Few");
+                        selectedSentence = resourceStringProvider.GetString(key + "_Few");
                         break;
                     case PluralTypeEnum.MANY:
-                        selectedSentence = getString(key + "_Many");
+                        selectedSentence = resourceStringProvider.GetString(key + "_Many");
                         break;
                 }
             }
@@ -123,7 +96,7 @@ namespace ReswPlus
             }
         }
 
-        private static IPluralProvider GetPluralChooser(string culture)
+        private static ReswPlus.PluralProviders.IPluralProvider GetPluralChooser(string culture)
         {
             switch (culture)
             {
