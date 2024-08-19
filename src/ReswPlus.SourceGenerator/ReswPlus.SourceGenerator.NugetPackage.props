@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>ReswPlus</Title>
+        <PackageId>ReswPlus</PackageId>
+        <Version>0.2.0-alpha</Version>
+        <Authors>Rudy Huyn</Authors>
+        <Description>ReswPlus - Advanced File Code Generator for Resw files</Description>
+        <PackageProjectUrl>https://github.com/reswplus/ReswPlus/</PackageProjectUrl>
+        <PackageIcon>Icon.png</PackageIcon>
+        <PackageCopyright>Copyright 2023</PackageCopyright>
+        <PackageTags>dotnet localization resx resw plural pluralization</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs"/>
+        <None Include="Images\Icon.png" Pack="true" PackagePath="\"/>
+        <None Include="ReswPlus.SourceGenerator.targets" PackagePath="buildTransitive\" Pack="true"/>
+        <None Include="ReswPlus.SourceGenerator.targets" PackagePath="build\" Pack="true"/>
+    </ItemGroup>
+</Project>
