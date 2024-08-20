@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using ReswPlus.Core;
 using ReswPlus.Core.ResourceParser;
 using ReswPlus.SourceGenerator.ClassGenerators.Models;
 using ReswPlus.SourceGenerator.Models;
@@ -144,7 +143,8 @@ internal class CSharpCodeGenerator : ICodeGenerator
     /// <param name="className">The name of the strongly-typed class.</param>
     private void OpenStronglyTypedClass(CodeStringBuilder builder, string resourceFilename, string className)
     {
-        _ = builder.AppendLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{Constants.ReswPlusName}\", \"{Constants.ReswPlusExtensionVersion}\")]")
+        var assembly = typeof(CSharpCodeGenerator).Assembly;
+        _ = builder.AppendLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{assembly.GetName().Name}\", \"{assembly.GetName().Version.ToString()}\")]")
             .AppendLine("[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]")
             .AppendLine("[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]")
             .AppendLine($"public static class {className} {{")
@@ -312,7 +312,8 @@ internal class CSharpCodeGenerator : ICodeGenerator
     /// <param name="keys">The collection of keys for the strongly-typed resource class.</param>
     private void CreateMarkupExtension(CodeStringBuilder builder, string resourceFileName, string className, IEnumerable<string> keys)
     {
-        _ = builder.AppendLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{Constants.ReswPlusName}\", \"{Constants.ReswPlusExtensionVersion}\")]")
+        var assembly = typeof(CSharpCodeGenerator).Assembly;
+        _ = builder.AppendLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{assembly.GetName().Name}\", \"{assembly.GetName().Version.ToString()}\")]")
             .AppendLine("[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]")
             .AppendLine("[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]")
             .AppendLine("[MarkupExtensionReturnType(ReturnType = typeof(string))]")

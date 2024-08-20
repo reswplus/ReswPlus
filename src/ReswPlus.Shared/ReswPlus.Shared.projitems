@@ -9,7 +9,6 @@
     <Import_RootNamespace>ReswPlus.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IErrorLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ResourceParser\FormatTag.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ResourceParser\ParameterType.cs" />
