@@ -1,5 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk">
-    <Import Project="..\..\nuget\ReswPlus.SourceGenerator.NugetPackage.props" Condition="'$(Configuration)' == 'Release'"/>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\..\nuget\ReswPlus.SourceGenerator.NugetPackage.props" Condition="'$(Configuration)' == 'Release'" />
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>12.0</LangVersion>

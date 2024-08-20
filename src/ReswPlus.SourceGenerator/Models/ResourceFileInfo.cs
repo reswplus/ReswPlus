@@ -1,6 +1,6 @@
-namespace ReswPlus.Core.ResourceInfo;
+namespace ReswPlus.SourceGenerator.Models;
 
-public class ResourceFileInfo
+internal class ResourceFileInfo
 {
     public string Path { get; }
     public IProject Project { get; }

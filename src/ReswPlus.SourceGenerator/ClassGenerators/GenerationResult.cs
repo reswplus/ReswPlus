@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using ReswPlus.Core.CodeGenerators;
+using ReswPlus.SourceGenerator.CodeGenerators;
 
-namespace ReswPlus.Core.ClassGenerator;
+namespace ReswPlus.SourceGenerator.ClassGenerators;
 
-public class GenerationResult
+internal class GenerationResult
 {
     public IEnumerable<GeneratedFile> Files { get; set; }
     public bool ContainsPlural { get; set; }

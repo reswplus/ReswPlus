@@ -1,10 +1,10 @@
-﻿namespace ReswPlus.Core.ResourceInfo;
+﻿namespace ReswPlus.SourceGenerator.Models;
 
-public interface IProject
+internal interface IProject
 {
     bool IsLibrary { get; }
     string Name { get; }
-    ResourceInfo.Language Language { get; }
+    Language Language { get; }
     string GetPrecompiledHeader();
     string GetIndentString();
 }

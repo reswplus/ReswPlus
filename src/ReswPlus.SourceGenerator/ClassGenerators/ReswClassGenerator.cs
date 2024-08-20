@@ -4,13 +4,13 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ReswPlus.Core.ClassGenerator.Models;
-using ReswPlus.Core.CodeGenerators;
 using ReswPlus.Core.Interfaces;
-using ReswPlus.Core.ResourceInfo;
 using ReswPlus.Core.ResourceParser;
+using ReswPlus.SourceGenerator.ClassGenerators.Models;
+using ReswPlus.SourceGenerator.CodeGenerators;
+using ReswPlus.SourceGenerator.Models;
 
-namespace ReswPlus.Core.ClassGenerator;
+namespace ReswPlus.SourceGenerator.ClassGenerators;
 
 public class ReswClassGenerator
 {
@@ -46,12 +46,12 @@ public class ReswClassGenerator
         _logger = logger;
     }
 
-    public static ReswClassGenerator CreateGenerator(ResourceFileInfo resourceFileInfo, IErrorLogger logger)
+    internal static ReswClassGenerator CreateGenerator(ResourceFileInfo resourceFileInfo, IErrorLogger logger)
     {
         ICodeGenerator codeGenerator = null;
         switch (resourceFileInfo.Project.Language)
         {
-            case Language.CSHARP:
+            case Language.CSharp:
                 codeGenerator = new CSharpCodeGenerator();
                 break;
         }
@@ -59,7 +59,7 @@ public class ReswClassGenerator
         return codeGenerator is not null ? new ReswClassGenerator(resourceFileInfo, codeGenerator, logger) : null;
     }
 
-    private StronglyTypedClass Parse(string content, string defaultNamespace, bool isAdvanced)
+    private StronglyTypedClass Parse(string content, string defaultNamespace, bool isAdvanced, AppType appType)
     {
         var namespaceToUse = ExtractNamespace(defaultNamespace);
         var resourceFileName = Path.GetFileName(_resourceFileInfo.Path);
@@ -78,7 +78,8 @@ public class ReswClassGenerator
             IsAdvanced = isAdvanced,
             ClassName = className,
             Namespaces = namespaceToUse,
-            ResoureFile = resouceNameForResourceLoader
+            ResoureFile = resouceNameForResourceLoader,
+            AppType = appType
         };
 
         var stringItems = reswInfo.Items
@@ -175,9 +176,9 @@ public class ReswClassGenerator
         return _regexDotNetFormatting.IsMatch(source);
     }
 
-    public GenerationResult GenerateCode(string baseFilename, string content, string defaultNamespace, bool isAdvanced)
+    internal GenerationResult GenerateCode(string baseFilename, string content, string defaultNamespace, bool isAdvanced, AppType appType)
     {
-        var stronglyTypedClassInfo = Parse(content, defaultNamespace, isAdvanced);
+        var stronglyTypedClassInfo = Parse(content, defaultNamespace, isAdvanced, appType);
         if (stronglyTypedClassInfo is null)
         {
             return null;

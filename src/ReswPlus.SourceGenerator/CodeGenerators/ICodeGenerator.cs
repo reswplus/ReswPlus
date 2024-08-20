@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using ReswPlus.Core.ClassGenerator.Models;
-using ReswPlus.Core.ResourceInfo;
+using ReswPlus.SourceGenerator.ClassGenerators.Models;
+using ReswPlus.SourceGenerator.Models;
 
-namespace ReswPlus.Core.CodeGenerators;
+namespace ReswPlus.SourceGenerator.CodeGenerators;
 
-public class GeneratedFile
+internal class GeneratedFile
 {
     public string Filename { get; set; }
     public string Content { get; set; }
@@ -12,7 +12,7 @@ public class GeneratedFile
 
 }
 
-public interface ICodeGenerator
+internal interface ICodeGenerator
 {
     IEnumerable<GeneratedFile> GetGeneratedFiles(string baseFilename, StronglyTypedClass info, ResourceFileInfo projectItem);
 }

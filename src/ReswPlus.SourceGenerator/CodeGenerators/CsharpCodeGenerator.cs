@@ -1,14 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
-using ReswPlus.Core.ClassGenerator.Models;
+using ReswPlus.Core;
 using ReswPlus.Core.ResourceParser;
+using ReswPlus.SourceGenerator.ClassGenerators.Models;
+using ReswPlus.SourceGenerator.Models;
 
-namespace ReswPlus.Core.CodeGenerators;
+namespace ReswPlus.SourceGenerator.CodeGenerators;
 
 /// <summary>
 /// Generates C# code for strongly-typed resources based on localization files.
 /// </summary>
-public class CSharpCodeGenerator : ICodeGenerator
+internal class CSharpCodeGenerator : ICodeGenerator
 {
     /// <summary>
     /// Generates the C# files based on the provided strongly-typed class information and resource file information.
@@ -17,10 +19,10 @@ public class CSharpCodeGenerator : ICodeGenerator
     /// <param name="info">The strongly-typed class information used for generating code.</param>
     /// <param name="resourceFileInfo">The resource file information used to generate the C# files.</param>
     /// <returns>A collection of generated files.</returns>
-    public IEnumerable<GeneratedFile> GetGeneratedFiles(string baseFilename, StronglyTypedClass info, ResourceInfo.ResourceFileInfo resourceFileInfo)
+    public IEnumerable<GeneratedFile> GetGeneratedFiles(string baseFilename, StronglyTypedClass info, ResourceFileInfo resourceFileInfo)
     {
         var builder = new CodeStringBuilder(resourceFileInfo.Project.GetIndentString());
-        GenerateHeaders(builder, info.IsAdvanced);
+        GenerateHeaders(builder, info.IsAdvanced, info.AppType);
         AddNewLine(builder);
         OpenNamespace(builder, info.Namespaces);
         OpenStronglyTypedClass(builder, info.ResoureFile, info.ClassName);
@@ -90,17 +92,20 @@ public class CSharpCodeGenerator : ICodeGenerator
     /// </summary>
     /// <param name="builder">The code string builder to append the headers to.</param>
     /// <param name="supportPluralization">Indicates whether pluralization support is needed.</param>
-    private void GenerateHeaders(CodeStringBuilder builder, bool supportPluralization)
+    private void GenerateHeaders(CodeStringBuilder builder, bool supportPluralization, AppType appType)
     {
         _ = builder.AppendLine("// File generated automatically by ReswPlus. https://github.com/DotNetPlus/ReswPlus")
-            .AppendLine("using System;")
-            .AppendLine("#if NETCOREAPP", false)
-            .AppendLine("using Microsoft.UI.Xaml.Markup;")
-            .AppendLine("using Microsoft.UI.Xaml.Data;")
-            .AppendLine("#else", false)
-            .AppendLine("using Windows.UI.Xaml.Markup;")
-            .AppendLine("using Windows.UI.Xaml.Data;")
-            .AppendLine("#endif", false);
+            .AppendLine("using System;");
+        if (appType is AppType.WindowsAppSDK)
+        {
+            builder.AppendLine("using Microsoft.UI.Xaml.Markup;")
+            .AppendLine("using Microsoft.UI.Xaml.Data;");
+        }
+        else
+        {
+            builder.AppendLine("using Windows.UI.Xaml.Markup;")
+            .AppendLine("using Windows.UI.Xaml.Data;");
+        }
     }
 
     /// <summary>

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using ReswPlus.Core.ResourceParser;
 
-namespace ReswPlus.Core.ClassGenerator.Models;
+namespace ReswPlus.SourceGenerator.ClassGenerators.Models;
 
-public abstract class Localization
+internal abstract class Localization
 {
     public string Key { get; set; }
     public List<IFormatTagParameter> Parameters { get; set; } = new List<IFormatTagParameter>();
@@ -14,26 +14,26 @@ public abstract class Localization
     public bool IsProperty => !Parameters.OfType<FunctionFormatTagParameter>().Any() && !ExtraParameters.Any();
 }
 
-public class RegularLocalization : Localization
+internal class RegularLocalization : Localization
 { }
 
-public class PluralLocalization : Localization
+internal class PluralLocalization : Localization
 {
     public bool SupportNoneState { get; set; }
     public FunctionFormatTagParameter ParameterToUseForPluralization { get; set; }
 }
 
-public interface IVariantLocalization
+internal interface IVariantLocalization
 {
     FunctionFormatTagParameter ParameterToUseForVariant { get; set; }
 }
 
-public class PluralVariantLocalization : PluralLocalization, IVariantLocalization
+internal class PluralVariantLocalization : PluralLocalization, IVariantLocalization
 {
     public FunctionFormatTagParameter ParameterToUseForVariant { get; set; }
 }
 
-public class VariantLocalization : Localization, IVariantLocalization
+internal class VariantLocalization : Localization, IVariantLocalization
 {
     public FunctionFormatTagParameter ParameterToUseForVariant { get; set; }
 }

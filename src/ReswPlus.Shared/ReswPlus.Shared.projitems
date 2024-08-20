@@ -9,18 +9,8 @@
     <Import_RootNamespace>ReswPlus.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ClassGenerator\GenerationResult.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ClassGenerator\Models\Localization.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ClassGenerator\Models\StronglyTypedClass.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ClassGenerator\ReswClassGenerator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\CodeStringBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\CsharpCodeGenerator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CodeGenerators\ICodeGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IErrorLogger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ResourceInfo\IProject.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ResourceInfo\Language.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ResourceInfo\ResourceFileInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ResourceParser\FormatTag.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ResourceParser\ParameterType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ResourceParser\ReswFilters.cs" />

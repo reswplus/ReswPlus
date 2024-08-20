@@ -1,8 +1,6 @@
-using ReswPlus.Core.ResourceInfo;
-
 namespace ReswPlus.SourceGenerator.Models;
 
-public class Project : IProject
+internal class Project : IProject
 {
     public Project(string name, bool isLibrary)
     {
@@ -14,7 +12,7 @@ public class Project : IProject
 
     public string Name { get; }
 
-    public Language Language => Language.CSHARP;
+    public Language Language => Language.CSharp;
 
     public string GetIndentString()
     {

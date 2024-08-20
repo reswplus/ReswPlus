@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace ReswPlus.Core.CodeGenerators;
+namespace ReswPlus.SourceGenerator.CodeGenerators;
 
-public class CodeStringBuilder
+internal class CodeStringBuilder
 {
     private readonly StringBuilder _stringBuilder;
     private readonly string _indentString;

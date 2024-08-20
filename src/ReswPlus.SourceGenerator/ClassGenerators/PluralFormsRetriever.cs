@@ -1,19 +1,25 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ReswPlus.SourceGenerator.Pluralization;
+namespace ReswPlus.SourceGenerator.ClassGenerators;
 
 /// <summary>
 /// Provides functionality to manage and retrieve pluralization rules for various languages.
 /// </summary>
-internal class PluralFormsProvider
+internal class PluralFormsRetriever
 {
+    internal record PluralForm
+    {
+        public string[] Languages { get; set; }
+        public string Id { get; set; }
+    }
+
     /// <summary>
     /// A static collection of predefined plural forms and their associated languages.
     /// </summary>
-    private static readonly PluralForm[] PluralForms = new PluralForm[] {
+    private static readonly PluralForm[] PluralForms = [
         new () {
-            Languages = new [] {
+            Languages = [
                 "ak", // Akan
 			        "bh", // Bihari
 			        "guw", // Gun
@@ -23,11 +29,11 @@ internal class PluralFormsProvider
 			        "pa", // Punjabi
 			        "ti", // Tigrinya
 			        "wa" // Walloon
-		        },
+		        ],
             Id = "IntOneOrZero"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "am", // Amharic
 			        "bn", // Bengali
 			        "ff", // Fulah
@@ -37,21 +43,21 @@ internal class PluralFormsProvider
 			        "mr", // Marathi
 			        "fa", // Persian
 			        "zu", // Zulu
-		        },
+		        ],
             Id = "ZeroToOne"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "hy", // Armenian
 			        "fr", // French
 			        "kab", // Kabyle
-		        },
+		        ],
             Id = "ZeroToTwoExcluded"
         }
 
         ,
         new () {
-            Languages = new [] {
+            Languages = [
                 "af", // Afrikaans
 			        "sq", // Albanian
 			        "ast", // Asturian
@@ -151,120 +157,120 @@ internal class PluralFormsProvider
 			        "xh", // Xhosa
 			        "yi", // Yiddish
 			        "ji", // ji
-		        },
+		        ],
             Id = "OnlyOne"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "si", // Sinhala
-		        },
+		        ],
             Id = "Sinhala"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "lv", // Latvian 
 			        "prg", // Prussian
-		        },
+		        ],
             Id = "Latvian"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "ga", // Irish
-		        },
+		        ],
             Id = "Irish"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "ro", // Romanian
 			        "mo", // Moldavian
-		        },
+		        ],
             Id = "Romanian"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "lt", // Lithuanian
-		        },
+		        ],
             Id = "Lithuanian"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "ru", // Russian
 			        "uk", // Ukrainian
 			        "be", // Belarusian
-		        },
+		        ],
             Id = "Slavic"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "cs", // Czech
 			        "sk", // Slovak
-		        },
+		        ],
             Id = "Czech"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "pl", // Polish 
-		        },
+		        ],
             Id = "Polish"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "sl", // Slovenian
-		        },
+		        ],
             Id = "Slovenian"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "ar", // Arabic
-		        },
+		        ],
             Id = "Arabic"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "he", // Hebrew
 			        "iw", // Iw
-		        },
+		        ],
             Id = "Hebrew"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "fil", // Filipino
 			        "tl", // Tagalog
-		        },
+		        ],
             Id = "Filipino"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "mk",
-            },
+            ],
             Id = "Macedonian"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "br", // Breton
-		        },
+		        ],
             Id = "Breizh"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "tzm", // Central Atlas Tamazight
-		        },
+		        ],
             Id = "CentralAtlasTamazight"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "ksh", //Colognian
-		        },
+		        ],
             Id = "OneOrZero"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "lag", //Langi
-		        },
+		        ],
             Id = "OneOrZeroToOneExcluded"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "kw", // Cornish
 			        "smn", // Inari Sami
 			        "iu", // Inuktitut
@@ -274,61 +280,61 @@ internal class PluralFormsProvider
 			        "smi", // Sami languages [Other]
 			        "sms", // Skolt Sami
 			        "sma", // Southern Sami
-		        },
+		        ],
             Id = "OneOrTwo"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "bs", // Bosnian
 			        "hr", // Croatian
 			        "sr", // Serbian
 			        "sh", // Serbo-Croatian
-		        },
+		        ],
             Id = "Croat"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "shi",
-            },
+            ],
             Id = "Tachelhit"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "is",
-            },
+            ],
             Id = "Icelandic"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "gv",
-            },
+            ],
             Id = "Manx"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "gd",
-            },
+            ],
             Id = "ScottishGaelic"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "mt", // Maltese
-		        },
+		        ],
             Id = "Maltese"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "cy", // Welsh
-		        },
+		        ],
             Id = "Welsh"
         },
         new () {
-            Languages = new [] {
+            Languages = [
                 "da", // Danish
-		        },
+		        ],
             Id = "Danish"
         }
-    };
+    ];
 
     /// <summary>
     /// Retrieves the plural forms that apply to the given list of languages.
