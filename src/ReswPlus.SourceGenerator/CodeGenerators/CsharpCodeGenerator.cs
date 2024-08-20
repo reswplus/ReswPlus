@@ -48,7 +48,7 @@ internal class CSharpCodeGenerator : ICodeGenerator
 
         CloseStronglyTypedClass(builder);
         AddNewLine(builder);
-        CreateMarkupExtension(builder, info.ResoureFile, info.ClassName + "Extension", info.Items.OfType<Localization>().Select(s => s.Key));
+        CreateMarkupExtension(builder, info.ResoureFile, $"{info.ClassName}Extension", info.Items.OfType<Localization>().Select(s => s.Key));
         CloseNamespace(builder, info.Namespaces);
         return GetGeneratedFiles(builder, baseFilename);
     }
@@ -58,22 +58,19 @@ internal class CSharpCodeGenerator : ICodeGenerator
     /// </summary>
     /// <param name="type">The parameter type.</param>
     /// <returns>The corresponding C# type string.</returns>
-    private string GetParameterTypeString(ParameterType type)
+    private string GetParameterTypeString(ParameterType type) => type switch
     {
-        return type switch
-        {
-            ParameterType.Byte => "byte",
-            ParameterType.Int => "int",
-            ParameterType.Uint => "uint",
-            ParameterType.Long => "long",
-            ParameterType.String => "string",
-            ParameterType.Double => "double",
-            ParameterType.Char => "char",
-            ParameterType.Ulong => "ulong",
-            ParameterType.Decimal => "decimal",
-            _ => "object",
-        };
-    }
+        ParameterType.Byte => "byte",
+        ParameterType.Int => "int",
+        ParameterType.Uint => "uint",
+        ParameterType.Long => "long",
+        ParameterType.String => "string",
+        ParameterType.Double => "double",
+        ParameterType.Char => "char",
+        ParameterType.Ulong => "ulong",
+        ParameterType.Decimal => "decimal",
+        _ => "object",
+    };
 
     /// <summary>
     /// Creates the generated file object for the C# code.
@@ -93,16 +90,19 @@ internal class CSharpCodeGenerator : ICodeGenerator
     /// <param name="supportPluralization">Indicates whether pluralization support is needed.</param>
     private void GenerateHeaders(CodeStringBuilder builder, bool supportPluralization, AppType appType)
     {
-        _ = builder.AppendLine("// File generated automatically by ReswPlus. https://github.com/DotNetPlus/ReswPlus")
+        _ = builder
+            .AppendLine("// File generated automatically by ReswPlus. https://github.com/DotNetPlus/ReswPlus")
             .AppendLine("using System;");
         if (appType is AppType.WindowsAppSDK)
         {
-            builder.AppendLine("using Microsoft.UI.Xaml.Markup;")
+            builder
+            .AppendLine("using Microsoft.UI.Xaml.Markup;")
             .AppendLine("using Microsoft.UI.Xaml.Data;");
         }
         else
         {
-            builder.AppendLine("using Windows.UI.Xaml.Markup;")
+            builder
+            .AppendLine("using Windows.UI.Xaml.Markup;")
             .AppendLine("using Windows.UI.Xaml.Data;");
         }
     }
@@ -116,8 +116,9 @@ internal class CSharpCodeGenerator : ICodeGenerator
     {
         if (namespaces != null && namespaces.Any())
         {
-            _ = builder.AppendLine($"namespace {namespaces.Aggregate((a, b) => a + "." + b)}{{");
-            _ = builder.AddLevel();
+            _ = builder
+                .AppendLine($"namespace {namespaces.Aggregate((a, b) => a + "." + b)}{{")
+                .AddLevel();
         }
     }
 
@@ -130,8 +131,9 @@ internal class CSharpCodeGenerator : ICodeGenerator
     {
         if (namespaces != null && namespaces.Any())
         {
-            _ = builder.RemoveLevel();
-            _ = builder.AppendLine($"}} //{namespaces.Aggregate((a, b) => a + "." + b)}");
+            _ = builder
+                .RemoveLevel()
+                .AppendLine($"}} //{namespaces.Aggregate((a, b) => a + "." + b)}");
         }
     }
 
@@ -144,7 +146,8 @@ internal class CSharpCodeGenerator : ICodeGenerator
     private void OpenStronglyTypedClass(CodeStringBuilder builder, string resourceFilename, string className)
     {
         var assembly = typeof(CSharpCodeGenerator).Assembly;
-        _ = builder.AppendLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{assembly.GetName().Name}\", \"{assembly.GetName().Version.ToString()}\")]")
+        _ = builder
+            .AppendLine($"[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"{assembly.GetName().Name}\", \"{assembly.GetName().Version.ToString()}\")]")
             .AppendLine("[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]")
             .AppendLine("[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]")
             .AppendLine($"public static class {className} {{")
@@ -164,7 +167,8 @@ internal class CSharpCodeGenerator : ICodeGenerator
     /// <param name="builder">The code string builder to append the closing class block to.</param>
     private void CloseStronglyTypedClass(CodeStringBuilder builder)
     {
-        _ = builder.RemoveLevel()
+        _ = builder
+            .RemoveLevel()
             .AppendLine("}");
     }
 
@@ -202,13 +206,15 @@ internal class CSharpCodeGenerator : ICodeGenerator
     /// <param name="parameterForVariant">The parameter to be used for variants.</param>
     private void CreateFormatMethod(CodeStringBuilder builder, string key, bool isProperty, IEnumerable<IFormatTagParameter> parameters, string summary = null, IEnumerable<FunctionFormatTagParameter> extraParameters = null, FunctionFormatTagParameter parameterForPluralization = null, bool supportNoneState = false, FunctionFormatTagParameter parameterForVariant = null)
     {
-        _ = builder.AppendLine("/// <summary>")
+        _ = builder
+            .AppendLine("/// <summary>")
             .AppendLine($"///   {summary}")
             .AppendLine("/// </summary>");
 
         if (isProperty)
         {
-            _ = builder.AppendLine($"public static string {key}")
+            _ = builder
+                .AppendLine($"public static string {key}")
                 .AppendLine("{")
                 .AddLevel()
                 .AppendLine("get");
@@ -227,7 +233,8 @@ internal class CSharpCodeGenerator : ICodeGenerator
             {
                 // one of the parameters is a variantId, we must create a second method with object as the variantId type.
                 var genericParametersStr = functionParameters.Select(p => (p.IsVariantId ? "object" : GetParameterTypeString(p.Type)) + " " + p.Name).Aggregate((a, b) => a + ", " + b);
-                _ = builder.AppendLine($"public static string {key}({genericParametersStr})")
+                _ = builder
+                    .AppendLine($"public static string {key}({genericParametersStr})")
                     .AppendLine("{")
                     .AddLevel()
                     .AppendLine("try")
@@ -253,8 +260,9 @@ internal class CSharpCodeGenerator : ICodeGenerator
             var parametersStr = functionParameters.Select(p => GetParameterTypeString(p.Type) + " " + p.Name).Aggregate((a, b) => a + ", " + b);
             _ = builder.AppendLine($"public static string {key}({parametersStr})");
         }
-        _ = builder.AppendLine("{");
-        _ = builder.AddLevel();
+        _ = builder
+            .AppendLine("{")
+            .AddLevel();
 
         var keyToUseStr = $"\"{key}\"";
         if (parameterForVariant != null)
@@ -295,10 +303,12 @@ internal class CSharpCodeGenerator : ICodeGenerator
 
         if (isProperty)
         {
-            _ = builder.RemoveLevel()
+            _ = builder
+                .RemoveLevel()
                 .AppendLine("}");
         }
-        _ = builder.RemoveLevel()
+        _ = builder
+            .RemoveLevel()
             .AppendLine("}");
 
     }
@@ -323,13 +333,14 @@ internal class CSharpCodeGenerator : ICodeGenerator
             .AppendLine("public enum KeyEnum")
             .AppendLine("{")
             .AddLevel()
-            .AppendLine("__Undefined = 0,");
+            .AppendLine("_Undefined = 0,");
 
         foreach (var key in keys)
         {
             _ = builder.AppendLine($"{key},");
         }
-        _ = builder.RemoveLevel()
+        _ = builder
+            .RemoveLevel()
             .AppendLine("}")
             .AppendEmptyLine()
             .AppendLine("private static _ReswPlus_AutoGenerated.ResourceStringProvider _resourceStringProvider;")
@@ -345,20 +356,8 @@ internal class CSharpCodeGenerator : ICodeGenerator
             .AppendLine("protected override object ProvideValue()")
             .AppendLine("{")
             .AddLevel()
-            .AppendLine("string res;")
-            .AppendLine("if(Key is KeyEnum.__Undefined)")
-            .AppendLine("{")
-            .AddLevel()
-            .AppendLine("res = string.Empty;")
-            .RemoveLevel()
-            .AppendLine("}")
-            .AppendLine("else")
-            .AppendLine("{")
-            .AddLevel()
-            .AppendLine("res = _resourceStringProvider.GetString(Key.ToString());")
-            .RemoveLevel()
-            .AppendLine("}")
-            .AppendLine("return Converter is null ? res : Converter.Convert(res, typeof(String), ConverterParameter, null);")
+            .AppendLine("var value = Key is KeyEnum._Undefined ? string.Empty : _resourceStringProvider.GetString(Key.ToString());")
+            .AppendLine("return Converter is null ? value : Converter.Convert(value, typeof(String), ConverterParameter, null);")
             .RemoveLevel()
             .AppendLine("}")
             .RemoveLevel()
