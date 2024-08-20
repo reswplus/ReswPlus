@@ -4,7 +4,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>ReswPlus</Title>
         <PackageId>ReswPlus</PackageId>
-        <Version>0.2.0-alpha</Version>
+        <Version>0.2.1-alpha</Version>
         <Authors>Rudy Huyn</Authors>
         <Description>ReswPlus - Advanced File Code Generator for Resw files</Description>
         <PackageProjectUrl>https://github.com/reswplus/ReswPlus/</PackageProjectUrl>
@@ -12,11 +12,13 @@
         <PackageCopyright>Copyright 2023</PackageCopyright>
         <PackageTags>dotnet localization resx resw plural pluralization</PackageTags>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs"/>
-        <None Include="Images\Icon.png" Pack="true" PackagePath="\"/>
-        <None Include="ReswPlus.SourceGenerator.targets" PackagePath="buildTransitive\" Pack="true"/>
-        <None Include="ReswPlus.SourceGenerator.targets" PackagePath="build\" Pack="true"/>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers\dotnet\cs"/>
+        <None Include="$(MSBuildThisFileDirectory)Icon.png" Pack="true" PackagePath="\"/>
+        <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\"/>
+        <None Include="$(MSBuildThisFileDirectory)ReswPlus.targets" PackagePath="buildTransitive\" Pack="true"/>
+        <None Include="$(MSBuildThisFileDirectory)ReswPlus.targets" PackagePath="build\" Pack="true"/>
     </ItemGroup>
 </Project>
