@@ -21,7 +21,6 @@ public class ReswClassGenerator
 
     private static readonly Regex _regexStringFormat;
     private static readonly Regex _regexRemoveSpace = new("\\s+");
-    private static readonly Regex _regexDotNetFormatting = new(@"(?<!{){\d+(,-?\d+)?(:[^}]+)?}");
     private readonly ResourceFileInfo _resourceFileInfo;
     private readonly ICodeGenerator _codeGenerator;
     private readonly IErrorLogger _logger;
@@ -93,9 +92,10 @@ public class ReswClassGenerator
 
             foreach (var item in itemsWithPluralOrVariant)
             {
+                var itemSimplifiedKey = SimplifyItemKey(item.Key);
                 if (item.SupportPlural)
                 {
-                    var idNone = item.Key + "_None";
+                    var idNone = $"{itemSimplifiedKey}_None";
                     var hasNoneForm = reswInfo.Items.Any(i => i.Key == idNone);
 
                     var singleLineValue = _regexRemoveSpace.Replace(item.Items.FirstOrDefault().Value, " ").Trim();
@@ -105,13 +105,13 @@ public class ReswClassGenerator
                     var localization = item.SupportVariants
                         ? new PluralVariantLocalization()
                         {
-                            Key = item.Key,
+                            Key = itemSimplifiedKey,
                             Summary = summary,
                             SupportNoneState = hasNoneForm,
                         }
                         : new PluralLocalization()
                         {
-                            Key = item.Key,
+                            Key = itemSimplifiedKey,
                             Summary = summary,
                             SupportNoneState = hasNoneForm,
                         };
@@ -134,7 +134,7 @@ public class ReswClassGenerator
 
                     var localization = new VariantLocalization()
                     {
-                        Key = item.Key,
+                        Key = itemSimplifiedKey,
                         Summary = summary,
                     };
 
@@ -151,12 +151,13 @@ public class ReswClassGenerator
         {
             foreach (var item in stringItems)
             {
+                var itemSimplifiedKey = SimplifyItemKey(item.Key);
                 var singleLineValue = _regexRemoveSpace.Replace(item.Value, " ").Trim();
                 var summary = $"Looks up a localized string similar to: {singleLineValue}";
 
                 var localization = new RegularLocalization()
                 {
-                    Key = item.Key,
+                    Key = itemSimplifiedKey,
                     Summary = summary,
                 };
 
@@ -171,9 +172,9 @@ public class ReswClassGenerator
         return result;
     }
 
-    private bool IsDotNetFormatting(string source)
+    private string SimplifyItemKey(string key)
     {
-        return _regexDotNetFormatting.IsMatch(source);
+        return key.Replace("-", "");
     }
 
     internal GenerationResult GenerateCode(string baseFilename, string content, string defaultNamespace, bool isAdvanced, AppType appType)

@@ -10,6 +10,10 @@ using Microsoft.CodeAnalysis.Text;
 using ReswPlus.SourceGenerator.ClassGenerators;
 using ReswPlus.SourceGenerator.Models;
 
+#if DEBUG
+using System.Diagnostics;
+#endif
+
 namespace ReswPlus.SourceGenerator;
 
 public enum AppType

@@ -10,5 +10,5 @@ internal class StronglyTypedClass
     public string ClassName { get; set; }
     public AppType AppType { get; set; }
 
-    public List<Localization> Items { get; set; } = new List<Localization>();
+    public List<Localization> Items { get; set; } = [];
 }

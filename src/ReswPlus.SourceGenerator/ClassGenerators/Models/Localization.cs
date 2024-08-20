@@ -7,8 +7,8 @@ namespace ReswPlus.SourceGenerator.ClassGenerators.Models;
 internal abstract class Localization
 {
     public string Key { get; set; }
-    public List<IFormatTagParameter> Parameters { get; set; } = new List<IFormatTagParameter>();
-    public List<FunctionFormatTagParameter> ExtraParameters { get; } = new List<FunctionFormatTagParameter>();
+    public List<IFormatTagParameter> Parameters { get; set; } = [];
+    public List<FunctionFormatTagParameter> ExtraParameters { get; } = [];
     public string Summary { get; set; }
     public bool IsDotNetFormatting { get; set; }
     public bool IsProperty => !Parameters.OfType<FunctionFormatTagParameter>().Any() && !ExtraParameters.Any();

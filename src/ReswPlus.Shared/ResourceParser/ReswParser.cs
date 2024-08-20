@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Xml;
 
 namespace ReswPlus.Core.ResourceParser;
@@ -9,7 +8,7 @@ public class ReswParser
     {
         var res = new ReswInfo
         {
-            Items = new List<ReswItem>()
+            Items = []
         };
 
         var xml = new XmlDocument();

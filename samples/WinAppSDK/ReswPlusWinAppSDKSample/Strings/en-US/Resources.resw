@@ -251,4 +251,10 @@
     <value>Your are {0}yo and named {1}!</value>
     <comment>this string is used in the second tab. #Format[Double, String]</comment>
   </data>
+  <data name="TestUIDLocalization.Text" xml:space="preserve">
+    <value>test</value>
+  </data>
+  <data name="TestResource-WithDash" xml:space="preserve">
+    <value>test with dash</value>
+  </data>
 </root>

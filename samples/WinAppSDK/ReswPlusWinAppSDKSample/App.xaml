@@ -15,7 +15,6 @@
             <Color x:Key="SystemAccentColor">#7B54C0</Color>
 
             <!--  Styles  -->
-
             <Style x:Key="SectionDescriptionTextBlockStyle" TargetType="TextBlock">
                 <Setter Property="Margin" Value="0,12" />
                 <Setter Property="IsTextSelectionEnabled" Value="True" />

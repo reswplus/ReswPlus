@@ -154,11 +154,6 @@ public class AndroidXMLConverter
         return androidXML;
     }
 
-    private static string FixQuotes(XElement dataNode)
-    {
-        return _regexFixQuotes.Replace(dataNode.Value, m => "\\\"");
-    }
-
     private static string RemoveAntislash(string text)
     {
         return text.Replace("\\\"", "\"").Replace("\\'", "'").Replace("\\n", "\n");

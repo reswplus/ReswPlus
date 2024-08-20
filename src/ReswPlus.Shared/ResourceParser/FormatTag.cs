@@ -33,7 +33,7 @@ public class FunctionFormatTagParameter : IFormatTagParameter
 
 public class FunctionFormatTagParametersInfo
 {
-    public List<IFormatTagParameter> Parameters { get; set; } = new List<IFormatTagParameter>();
+    public List<IFormatTagParameter> Parameters { get; set; } = [];
     public FunctionFormatTagParameter PluralizationParameter { get; set; }
     public FunctionFormatTagParameter VariantParameter { get; set; }
 }

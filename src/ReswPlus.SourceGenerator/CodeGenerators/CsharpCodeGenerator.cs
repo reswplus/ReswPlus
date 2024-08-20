@@ -217,7 +217,7 @@ internal class CSharpCodeGenerator : ICodeGenerator
         {
             var functionParameters = parameters != null
                 ? parameters.OfType<FunctionFormatTagParameter>().ToList()
-                : new List<FunctionFormatTagParameter>();
+                : [];
             if (extraParameters != null && extraParameters.Any())
             {
                 functionParameters.InsertRange(0, extraParameters);
