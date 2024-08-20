@@ -82,7 +82,8 @@ public class ReswClassGenerator
         };
 
         var stringItems = reswInfo.Items
-            .Where(i => !i.Key.Contains('.') && !(i.Comment?.Contains(TagIgnore) ?? false)).ToArray();
+            .Where(i => IsValidPropertyName(i.Key) && !(i.Comment?.Contains(TagIgnore) ?? false))
+            .ToArray();
 
         if (isAdvanced)
         {
@@ -92,10 +93,10 @@ public class ReswClassGenerator
 
             foreach (var item in itemsWithPluralOrVariant)
             {
-                var itemSimplifiedKey = SimplifyItemKey(item.Key);
+                var itemKey = item.Key;
                 if (item.SupportPlural)
                 {
-                    var idNone = $"{itemSimplifiedKey}_None";
+                    var idNone = $"{itemKey}_None";
                     var hasNoneForm = reswInfo.Items.Any(i => i.Key == idNone);
 
                     var singleLineValue = _regexRemoveSpace.Replace(item.Items.FirstOrDefault().Value, " ").Trim();
@@ -105,13 +106,13 @@ public class ReswClassGenerator
                     var localization = item.SupportVariants
                         ? new PluralVariantLocalization()
                         {
-                            Key = itemSimplifiedKey,
+                            Key = itemKey,
                             Summary = summary,
                             SupportNoneState = hasNoneForm,
                         }
                         : new PluralLocalization()
                         {
-                            Key = itemSimplifiedKey,
+                            Key = itemKey,
                             Summary = summary,
                             SupportNoneState = hasNoneForm,
                         };
@@ -134,7 +135,7 @@ public class ReswClassGenerator
 
                     var localization = new VariantLocalization()
                     {
-                        Key = itemSimplifiedKey,
+                        Key = itemKey,
                         Summary = summary,
                     };
 
@@ -151,13 +152,13 @@ public class ReswClassGenerator
         {
             foreach (var item in stringItems)
             {
-                var itemSimplifiedKey = SimplifyItemKey(item.Key);
+                var itemKey = item.Key;
                 var singleLineValue = _regexRemoveSpace.Replace(item.Value, " ").Trim();
                 var summary = $"Looks up a localized string similar to: {singleLineValue}";
 
                 var localization = new RegularLocalization()
                 {
-                    Key = itemSimplifiedKey,
+                    Key = itemKey,
                     Summary = summary,
                 };
 
@@ -172,9 +173,27 @@ public class ReswClassGenerator
         return result;
     }
 
-    private string SimplifyItemKey(string key)
+    private static bool IsValidPropertyName(string propertyName)
     {
-        return key.Replace("-", "");
+        if (string.IsNullOrWhiteSpace(propertyName))
+        {
+            return false;
+        }
+
+        if (!char.IsLetter(propertyName[0]) && propertyName[0] != '_')
+        {
+            return false;
+        }
+
+        for (int i = 1; i < propertyName.Length; i++)
+        {
+            if (!char.IsLetterOrDigit(propertyName[i]) && propertyName[i] != '_')
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     internal GenerationResult GenerateCode(string baseFilename, string content, string defaultNamespace, bool isAdvanced, AppType appType)
