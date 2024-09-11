@@ -327,7 +327,7 @@ internal class CSharpCodeGenerator : ICodeGenerator
             .AppendLine("[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]")
             .AppendLine("[global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]")
             .AppendLine("[MarkupExtensionReturnType(ReturnType = typeof(string))]")
-            .AppendLine($"public class {className} : MarkupExtension")
+            .AppendLine($"public partial class {className} : MarkupExtension")
             .AppendLine("{")
             .AddLevel()
             .AppendLine("public enum KeyEnum")
